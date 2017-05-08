@@ -4,7 +4,13 @@
     <string name="sancionados_label">Sancionados</string>
     <string name="sancionados_summary">Strikes de los usuarios</string>
     <string name="war_order_label">Orden de guerras</string>
-    <string name="war_order_summary">Quién lanza la siguiente?</string>
+    <string name="war_order_summary">¿Quién lanza la siguiente?</string>
     <string name="black_list_label">Lista negra</string>
     <string name="black_list_summary">Personas no deseadas</string>
+    <string name="about_text">Clan Manager ofrece herramientas de gestión a los colíderes
+    para facilitar el manejo del clan.\n\nPermite llevar una lista de sancionados, mantener el orden
+        de lanzamiento de guerra según el colíder que corresponda y almacena una lista de las
+        personas no bienvenidas en el clan.\n\nApp creada por Hueso. Acepto dólares en efectivo,
+        transferencia bancaria, una botella de whisky o cualquier tipo de agradecimiento.
+    </string>
 </resources>
