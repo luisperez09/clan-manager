@@ -14,9 +14,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final ArrayList<Option> options = new ArrayList<Option>();
-        options.add(new Option("Sancionados", "Cantidad de strikes del usuario"));
-        options.add(new Option("Orden de guerras", "¿Quién lanza la siguiente?"));
-        options.add(new Option("Lista Negra", "Personas no bienvenidas"));
+        options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary)));
+        options.add(new Option(getString(R.string.war_order_label), getString(R.string.war_order_summary)));
+        options.add(new Option(getString(R.string.black_list_label), getString(R.string.black_list_summary)));
 
         OptionAdapter adapter = new OptionAdapter(this, options);
         ListView listView = (ListView) findViewById(R.id.list_options);
