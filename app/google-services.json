@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1046340738257",
+    "firebase_url": "https://clanmanager-7bf42.firebaseio.com",
+    "project_id": "clanmanager-7bf42",
+    "storage_bucket": "clanmanager-7bf42.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046340738257:android:f24740c8a21b2207",
+        "android_client_info": {
+          "package_name": "com.example.android.clanmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1046340738257-muurkdmgepfkb28lrc3qr7hsd5d4vbdr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.clanmanager",
+            "certificate_hash": "0dbd113257d469eb2a3fad1b55becc3509fa4009"
+          }
+        },
+        {
+          "client_id": "1046340738257-vleubsv5ladnjukdjpveuj3c8kjaoi3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdEfStHznI5fwe9Bo8mQp-WKZx-RI6J2Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1046340738257-vleubsv5ladnjukdjpveuj3c8kjaoi3m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
