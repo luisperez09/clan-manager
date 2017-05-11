@@ -14,4 +14,7 @@
         personas no bienvenidas en el clan.\n\nApp creada por Hueso. Acepto dólares en efectivo,
         transferencia bancaria, una botella de whisky o cualquier tipo de agradecimiento.
     </string>
+    <string name="welcome">"Bienvenido "</string>
+    <string name="logged_in">Sesión iniciada</string>
+    <string name="logged_in_canceled">Inicio de sesión cancelado</string>
 </resources>

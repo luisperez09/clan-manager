@@ -26,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
      * Flag que chequea si el usuario logueado acaba de iniciar sesión
      */
     private static boolean primerLogin = true;
+    /**
+     * Nombre de usuario proveniente del proveedor (Gmail)
+     */
+    private String mUsername;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -50,10 +54,11 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    mUsername = user.getDisplayName();
                     // Usuario logueado
                     if (primerLogin) {
                         // Por primera vez
-                        Toast.makeText(MainActivity.this, "Bienvenido " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getString(R.string.welcome) + mUsername, Toast.LENGTH_SHORT).show();
                         primerLogin = false;
                     }
                 } else {
@@ -70,6 +75,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, R.string.logged_in, Toast.LENGTH_SHORT).show();
+            }
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, R.string.logged_in_canceled, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 
     @Override
@@ -99,13 +118,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, AboutActivity.class));
                 return true;
             case R.id.action_sign_out:
-                AuthUI.getInstance().signOut(this);
-                Toast.makeText(this, "Sesión cerrada.\nGracias por usar "
-                        + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
-                finish();
+                signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void signOut() {
+        AuthUI.getInstance().signOut(this);
+        Toast.makeText(this, "Sesión cerrada.\nGracias por usar "
+                + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
     }
 }
