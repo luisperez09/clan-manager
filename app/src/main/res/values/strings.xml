@@ -15,6 +15,7 @@
         transferencia bancaria, una botella de whisky o cualquier tipo de agradecimiento.
     </string>
     <string name="welcome">"Bienvenido "</string>
+    <string name="copyright">Copyright (C) 2017. Todos los derechos y zurdos reservados</string>
     <string name="logged_in">Sesión iniciada</string>
     <string name="logged_in_canceled">Inicio de sesión cancelado</string>
     <string name="under_development">Esta función aún esta bajo desarrollo</string>
