@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Clan Manager</string>
     <string name="about_label">Acerca de esta app</string>
+    <string name="sign_out_label">Cerrar sesión</string>
     <string name="sancionados_label">Sancionados</string>
     <string name="sancionados_summary">Strikes de los usuarios</string>
     <string name="war_order_label">Orden de guerras</string>

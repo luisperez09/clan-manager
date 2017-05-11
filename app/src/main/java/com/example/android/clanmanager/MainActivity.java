@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Flag que chequea si el usuario logueado acaba de iniciar sesión
      */
-    private static boolean justSignedIn = true;
+    private static boolean primerLogin = true;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // Usuario logueado
-                    if (justSignedIn) {
+                    if (primerLogin) {
                         // Por primera vez
                         Toast.makeText(MainActivity.this, "Bienvenido " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                        justSignedIn = false;
+                        primerLogin = false;
                     }
                 } else {
                     // Usuario no logueado
@@ -97,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_about:
                 startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            case R.id.action_sign_out:
+                AuthUI.getInstance().signOut(this);
+                Toast.makeText(this, "Sesión cerrada.\nGracias por usar "
+                        + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
