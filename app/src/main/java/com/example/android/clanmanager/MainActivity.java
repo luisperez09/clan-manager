@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,13 +43,26 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         final ArrayList<Option> options = new ArrayList<Option>();
-        options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary)));
-        options.add(new Option(getString(R.string.war_order_label), getString(R.string.war_order_summary)));
-        options.add(new Option(getString(R.string.black_list_label), getString(R.string.black_list_summary)));
+        options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary), this, null));
+        options.add(new Option(getString(R.string.war_order_label), getString(R.string.war_order_summary), this, null));
+        options.add(new Option(getString(R.string.black_list_label), getString(R.string.black_list_summary), this, null));
 
         OptionAdapter adapter = new OptionAdapter(this, options);
         ListView listView = (ListView) findViewById(R.id.list_options);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Option currentOption = options.get(position);
+                Intent intent = currentOption.getOptionIntent();
+                if (intent != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.under_development, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
