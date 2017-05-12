@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
      * Nombre de usuario proveniente del proveedor (Gmail)
      */
     private String mUsername;
+    public static final String TAG = MainActivity.class.getSimpleName();
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -113,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         Map<String, Object> defaultConfigMap = new HashMap<>();
         defaultConfigMap.put(APP_VERSION_KEY, CURRENT_APP_VERSION);
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
+        fetchConfig();
     }
 
     @Override
@@ -167,5 +172,37 @@ public class MainActivity extends AppCompatActivity {
         AuthUI.getInstance().signOut(this);
         Toast.makeText(this, "Sesión cerrada.\nGracias por usar "
                 + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
+    }
+
+    private void fetchConfig() {
+        long cacheExpiration = 3600; // 1 hora
+        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+            cacheExpiration = 0;
+        }
+        mFirebaseRemoteConfig.fetch(cacheExpiration)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mFirebaseRemoteConfig.activateFetched();
+                        compareAppVersion();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error fetching config", e);
+                        compareAppVersion();
+                    }
+                });
+    }
+
+    private void compareAppVersion() {
+        Long app_version = mFirebaseRemoteConfig.getLong(APP_VERSION_KEY);
+        int fetchedAppVersion = app_version.intValue();
+        if (fetchedAppVersion > CURRENT_APP_VERSION) {
+            Log.w(TAG, "Update available");
+        } else {
+            Log.w(TAG, "Latest version");
+        }
     }
 }
