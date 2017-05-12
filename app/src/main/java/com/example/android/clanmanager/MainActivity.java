@@ -201,6 +201,8 @@ public class MainActivity extends AppCompatActivity {
         int fetchedAppVersion = app_version.intValue();
         if (fetchedAppVersion > CURRENT_APP_VERSION) {
             Log.w(TAG, "Update available");
+            finish();
+            Toast.makeText(this, "Hay una nueva versión disponible", Toast.LENGTH_LONG).show();
         } else {
             Log.w(TAG, "Latest version");
         }
