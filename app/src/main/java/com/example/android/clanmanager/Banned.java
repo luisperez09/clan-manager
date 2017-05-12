@@ -9,6 +9,10 @@ public class Banned {
         this.reason = reason;
     }
 
+    public Banned(){
+
+    }
+
     public String getBanned() {
         return banned;
     }
