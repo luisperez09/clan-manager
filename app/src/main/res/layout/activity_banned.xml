@@ -12,6 +12,7 @@
     tools:context="com.example.android.clanmanager.BannedActivity">
 
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -41,8 +42,8 @@
         android:id="@+id/submit_new_banned_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/linear_layout"
         android:background="@color/colorAccent"
         android:text="@string/ban_action"
         android:textColor="@android:color/white" />
