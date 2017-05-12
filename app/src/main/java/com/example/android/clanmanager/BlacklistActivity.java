@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +27,7 @@ public class BlacklistActivity extends AppCompatActivity {
 
     private ListView mlistView;
     private BannedAdapter mBannedAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class BlacklistActivity extends AppCompatActivity {
         ArrayList<Banned> banneds = new ArrayList<>();
         mBannedAdapter = new BannedAdapter(this, banneds);
         mlistView.setAdapter(mBannedAdapter);
+        mProgressBar = (ProgressBar) findViewById(R.id.blacklist_progress_bar);
 
         mAddBannedFab = (FloatingActionButton) findViewById(R.id.fab);
         mAddBannedFab.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +55,7 @@ public class BlacklistActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
 
@@ -69,6 +73,7 @@ public class BlacklistActivity extends AppCompatActivity {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Banned banned = dataSnapshot.getValue(Banned.class);
                     mBannedAdapter.add(banned);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
