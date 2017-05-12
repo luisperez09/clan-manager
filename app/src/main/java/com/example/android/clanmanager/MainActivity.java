@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,8 +81,9 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
-                                    .setProviders(Collections.singletonList(
-                                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                    .setProviders(Arrays.asList(
+                                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
                                                     .build()))
                                     .build(),
                             RC_SIGN_IN);
