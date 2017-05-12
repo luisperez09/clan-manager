@@ -29,7 +29,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
-            android:src="@mipmap/launcher_icon" />
+            android:src="@drawable/splash_image" />
     </LinearLayout>
 
 </ScrollView>
