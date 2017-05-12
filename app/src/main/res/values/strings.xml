@@ -24,4 +24,5 @@
     <string name="ban_appbar_label">Banear miembro</string>
     <string name="ban_reason">Motivo:</string>
     <string name="ban_action">Banear</string>
+    <string name="user_has_been_banned">Usuario baneado</string>
 </resources>
