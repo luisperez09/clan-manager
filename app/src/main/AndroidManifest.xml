@@ -31,6 +31,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".BannedActivity"
+            android:label="@string/ban_appbar_label"
+            android:parentActivityName=".BlacklistActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BlacklistActivity" />
+        </activity>
     </application>
 
 </manifest>
