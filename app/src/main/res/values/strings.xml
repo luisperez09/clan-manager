@@ -25,4 +25,5 @@
     <string name="ban_reason">Motivo:</string>
     <string name="ban_action">Banear</string>
     <string name="user_has_been_banned">Usuario baneado</string>
+    <string name="all_fields_required">Debe llenar todos los campos</string>
 </resources>

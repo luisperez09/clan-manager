@@ -38,11 +38,27 @@ public class BannedActivity extends AppCompatActivity {
                 Banned banned = new Banned(
                         mBannedEditText.getText().toString(),
                         mReasonEditText.getText().toString());
-                mBannedDatabaseReference.push().setValue(banned);
-                finish();
-                Toast.makeText(BannedActivity.this, R.string.user_has_been_banned, Toast.LENGTH_SHORT).show();
+                if (isValidBan(banned)) {
+                    mBannedDatabaseReference.push().setValue(banned);
+                    finish();
+                    Toast.makeText(BannedActivity.this, R.string.user_has_been_banned, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(BannedActivity.this, R.string.all_fields_required, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
+    }
+
+    /**
+     * Helper method que valida datos a insertar a la DB
+     *
+     * @param banned objeto a validar
+     * @return true si todos los campos están poblados, false si al menos uno está en blanco
+     */
+    private boolean isValidBan(Banned banned) {
+        String bannedName = banned.getBanned().trim();
+        String bannedReason = banned.getReason().trim();
+        return (!bannedName.isEmpty() && !bannedReason.isEmpty());
     }
 }
