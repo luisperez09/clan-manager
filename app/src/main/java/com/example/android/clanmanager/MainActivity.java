@@ -14,9 +14,13 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,18 +33,28 @@ public class MainActivity extends AppCompatActivity {
      */
     private static boolean primerLogin = true;
     /**
+     * Número de release de la app
+     */
+    private static final int CURRENT_APP_VERSION = 1;
+    /**
+     * Key de la versión de la app en la consola de Firebase
+     */
+    private static final String APP_VERSION_KEY = "app_version";
+    /**
      * Nombre de usuario proveniente del proveedor (Gmail)
      */
     private String mUsername;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
         final ArrayList<Option> options = new ArrayList<Option>();
         options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary), this, null));
@@ -91,6 +105,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+
+        Map<String, Object> defaultConfigMap = new HashMap<>();
+        defaultConfigMap.put(APP_VERSION_KEY, CURRENT_APP_VERSION);
+        mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
     }
 
     @Override
