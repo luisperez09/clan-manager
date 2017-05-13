@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -39,10 +40,20 @@ public class SancionadoListActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mSancionadosReference = mFirebaseDatabase.getReference().child("sancionados");
 
-        ArrayList<Sancionado> sancionados = new ArrayList<Sancionado>();
+        final ArrayList<Sancionado> sancionados = new ArrayList<Sancionado>();
         mSancionadoAdapter = new SancionadoAdapter(this, sancionados);
         mListView = (ListView) findViewById(R.id.sancionados_list);
         mListView.setAdapter(mSancionadoAdapter);
+        mProgressBar = (ProgressBar) findViewById(R.id.sancionado_progress_bar);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Sancionado clickedSancionado = mSancionadoAdapter.getItem(position);
+                String key = clickedSancionado.getKey();
+                Toast.makeText(SancionadoListActivity.this, "Key: " + key, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_sancionado_button);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +94,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
 
@@ -90,6 +102,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mSancionadoAdapter.clear();
         dettachDatabaseListener();
     }
 
@@ -106,7 +119,10 @@ public class SancionadoListActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Sancionado sancionado = dataSnapshot.getValue(Sancionado.class);
+                    String key = dataSnapshot.getKey();
+                    sancionado.setKey(key);
                     mSancionadoAdapter.add(sancionado);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
