@@ -39,6 +39,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".BlacklistActivity" />
         </activity>
+        <activity
+            android:name=".SancionadoListActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".SancionesEditorActivity"></activity>
     </application>
 
 </manifest>
