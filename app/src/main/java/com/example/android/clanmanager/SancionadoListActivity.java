@@ -1,6 +1,7 @@
 package com.example.android.clanmanager;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -52,7 +53,10 @@ public class SancionadoListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Sancionado clickedSancionado = mSancionadoAdapter.getItem(position);
                 String key = clickedSancionado.getKey();
-                Toast.makeText(SancionadoListActivity.this, "Key: " + key, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SancionadoListActivity.this, SancionesEditorActivity.class);
+                intent.putExtra("key", key)
+                        .putExtra("name", clickedSancionado.getName());
+                startActivity(intent);
             }
         });
 
