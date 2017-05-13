@@ -10,11 +10,14 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 public class SancionesEditorActivity extends AppCompatActivity {
 
     private TextView mSancionadoTextView;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mSancionadoReference;
+    private DatabaseReference mUserStrikesReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mSancionadoReference = mFirebaseDatabase.getReference().child("sancionados");
+        mUserStrikesReference = mFirebaseDatabase.getReference().child("sancionados").child(key).child("strikes");
 
 
         mSancionadoTextView = (TextView) findViewById(R.id.sancionado_text_view);
@@ -36,7 +39,18 @@ public class SancionesEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(SancionesEditorActivity.this, key, Toast.LENGTH_SHORT).show();
+                pushNewStrike();
+
             }
         });
     }
+
+    private void pushNewStrike() {
+        String date = DateFormat.getDateInstance().format(new Date());
+        Strike strike = new Strike(date, "Ataco tarde");
+        mUserStrikesReference.push().setValue(strike);
+        Toast.makeText(this, "Se agregó el strike", Toast.LENGTH_SHORT).show();
+    }
+
+
 }
