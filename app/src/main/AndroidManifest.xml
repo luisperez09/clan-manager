@@ -41,8 +41,9 @@
         </activity>
         <activity
             android:name=".SancionadoListActivity"
+            android:label="@string/sancionados_label"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".SancionesEditorActivity"></activity>
+        <activity android:name=".SancionesEditorActivity" />
     </application>
 
 </manifest>
