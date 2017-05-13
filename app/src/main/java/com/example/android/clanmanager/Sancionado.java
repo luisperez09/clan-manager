@@ -8,6 +8,10 @@ public class Sancionado {
         this.name = name;
     }
 
+    public Sancionado() {
+
+    }
+
     public String getName() {
         return name;
     }

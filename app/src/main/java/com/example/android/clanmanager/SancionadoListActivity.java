@@ -8,17 +8,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class SancionadoListActivity extends AppCompatActivity {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mSancionadosReference;
+    private ChildEventListener mChildEventListener;
+    private SancionadoAdapter mSancionadoAdapter;
 
     private String mSancionadoInput;
+    private ProgressBar mProgressBar;
+    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +38,11 @@ public class SancionadoListActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mSancionadosReference = mFirebaseDatabase.getReference().child("sancionados");
+
+        ArrayList<Sancionado> sancionados = new ArrayList<Sancionado>();
+        mSancionadoAdapter = new SancionadoAdapter(this, sancionados);
+        mListView = (ListView) findViewById(R.id.sancionados_list);
+        mListView.setAdapter(mSancionadoAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_sancionado_button);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,10 +80,60 @@ public class SancionadoListActivity extends AppCompatActivity {
         builder.show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attachDatabaseListener();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dettachDatabaseListener();
+    }
+
     private void pushNewSancionado() {
         Sancionado sancionado = new Sancionado(mSancionadoInput);
         mSancionadosReference.push().setValue(sancionado);
         Toast.makeText(this, "Nuevo sancionado: " + mSancionadoInput, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void attachDatabaseListener() {
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Sancionado sancionado = dataSnapshot.getValue(Sancionado.class);
+                    mSancionadoAdapter.add(sancionado);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mSancionadosReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void dettachDatabaseListener() {
+        if (mChildEventListener != null) {
+            mSancionadosReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
     }
 }
 
