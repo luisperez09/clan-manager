@@ -28,11 +28,11 @@ public class StrikeAdapter extends ArrayAdapter<Strike> {
         Strike currentStrike = getItem(position);
 
         String date = currentStrike.getDate();
-        TextView dateTextView = (TextView) listItemView.findViewById(R.id.option_text_view);
+        TextView dateTextView = (TextView) listItemView.findViewById(R.id.summary_text_view);
         dateTextView.setText(date);
 
         String reason = currentStrike.getReason();
-        TextView reasonTextView = (TextView) listItemView.findViewById(R.id.summary_text_view);
+        TextView reasonTextView = (TextView) listItemView.findViewById(R.id.option_text_view);
         reasonTextView.setText(reason);
 
         return listItemView;
