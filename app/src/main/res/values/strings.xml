@@ -28,4 +28,6 @@
     <string name="all_fields_required">Debe llenar todos los campos</string>
 
     <string name="users_strikes">Strikes de</string>
+
+    <string name="sancionado_empty_view_text">No hay sancionados</string>
 </resources>

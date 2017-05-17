@@ -162,11 +162,12 @@ public class SancionadoListActivity extends AppCompatActivity {
             mEmptyCheckListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.w(TAG, "onDataChange");
-                    if (dataSnapshot.exists()) {
-                        Log.w(TAG, "Hay valores!");
-                    } else {
-                        Log.w(TAG, "No hay valores!");
+                    if (!dataSnapshot.exists()) {
+                        // La lista está vacía
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        View emptyView = findViewById(R.id.sancionado_empty_view);
+                        emptyView.setVisibility(View.VISIBLE);
+                        mListView.setEmptyView(emptyView);
                     }
                 }
 
