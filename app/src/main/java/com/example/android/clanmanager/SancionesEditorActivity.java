@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
     private final static int EDITTEXT_INPUT_LIMIT = 40;
 
     private TextView mSancionadoTextView;
+    private ProgressBar mProgressBar;
     private StrikeAdapter mStrikeAdapter;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserStrikesReference;
@@ -52,6 +54,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         mStrikeAdapter = new StrikeAdapter(this, strikes);
         ListView listView = (ListView) findViewById(R.id.strikes_list);
         listView.setAdapter(mStrikeAdapter);
+        mProgressBar = (ProgressBar) findViewById(R.id.pb_sanciones_editor);
 
         mSancionadoTextView = (TextView) findViewById(R.id.sancionado_text_view);
         mSancionadoTextView.setText(username);
@@ -118,6 +121,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Strike strike = dataSnapshot.getValue(Strike.class);
                     mStrikeAdapter.add(strike);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
