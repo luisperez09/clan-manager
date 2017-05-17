@@ -20,15 +20,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class SancionadoListActivity extends AppCompatActivity {
 
+    public static final String TAG = SancionadoListActivity.class.getSimpleName();
+
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mSancionadosReference;
     private ChildEventListener mChildEventListener;
     private SancionadoAdapter mSancionadoAdapter;
+    private ValueEventListener mEmptyCheckListener;
 
     private String mSancionadoInput;
     private ProgressBar mProgressBar;
@@ -153,12 +157,37 @@ public class SancionadoListActivity extends AppCompatActivity {
             };
             mSancionadosReference.addChildEventListener(mChildEventListener);
         }
+
+        if (mEmptyCheckListener == null) {
+            mEmptyCheckListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.w(TAG, "onDataChange");
+                    if (dataSnapshot.exists()) {
+                        Log.w(TAG, "Hay valores!");
+                    } else {
+                        Log.w(TAG, "No hay valores!");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mSancionadosReference.addListenerForSingleValueEvent(mEmptyCheckListener);
+        }
     }
 
     private void dettachDatabaseListener() {
         if (mChildEventListener != null) {
             mSancionadosReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
+        }
+
+        if (mEmptyCheckListener != null) {
+            mSancionadosReference.removeEventListener(mEmptyCheckListener);
+            mEmptyCheckListener = null;
         }
     }
 }
