@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
     private TextView mSancionadoTextView;
     private ProgressBar mProgressBar;
+    private ListView mListView;
     private StrikeAdapter mStrikeAdapter;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserStrikesReference;
     private ChildEventListener mChildEventListener;
+    private ValueEventListener mEmptyCheckListener;
     private String mStrikeReason;
 
     @Override
@@ -52,8 +55,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
         ArrayList<Strike> strikes = new ArrayList<>();
         mStrikeAdapter = new StrikeAdapter(this, strikes);
-        ListView listView = (ListView) findViewById(R.id.strikes_list);
-        listView.setAdapter(mStrikeAdapter);
+        mListView = (ListView) findViewById(R.id.strikes_list);
+        mListView.setAdapter(mStrikeAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.pb_sanciones_editor);
 
         mSancionadoTextView = (TextView) findViewById(R.id.sancionado_text_view);
@@ -142,12 +145,35 @@ public class SancionesEditorActivity extends AppCompatActivity {
             };
             mUserStrikesReference.addChildEventListener(mChildEventListener);
         }
+        if (mEmptyCheckListener == null) {
+            mEmptyCheckListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        View emptyView = findViewById(R.id.strikes_empty_view);
+                        emptyView.setVisibility(View.VISIBLE);
+                        mListView.setEmptyView(emptyView);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mUserStrikesReference.addListenerForSingleValueEvent(mEmptyCheckListener);
+        }
     }
 
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mUserStrikesReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
+        }
+        if (mEmptyCheckListener != null) {
+            mUserStrikesReference.removeEventListener(mEmptyCheckListener);
+            mEmptyCheckListener = null;
         }
     }
 }

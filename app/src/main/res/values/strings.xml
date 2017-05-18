@@ -30,6 +30,7 @@
     <string name="users_strikes">Strikes de</string>
 
     <string name="sancionado_empty_view_text">No hay sancionados</string>
+    <string name="strikes_empty_view_text">No hay strikes</string>
 
     <string name="share">Compartir strikes</string>
     <string name="share_all">Compartir lista de strikes</string>
