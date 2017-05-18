@@ -30,4 +30,8 @@
     <string name="users_strikes">Strikes de</string>
 
     <string name="sancionado_empty_view_text">No hay sancionados</string>
+
+    <string name="share">Compartir strikes</string>
+    <string name="share_all">Compartir lista de strikes</string>
+    <string name="select_action">Seleccione acción</string>
 </resources>

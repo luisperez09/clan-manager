@@ -8,6 +8,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class SancionadoListActivity extends AppCompatActivity {
 
@@ -64,6 +67,8 @@ public class SancionadoListActivity extends AppCompatActivity {
             }
         });
 
+        registerForContextMenu(mListView);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_sancionado_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +76,44 @@ public class SancionadoListActivity extends AppCompatActivity {
                 showAlertDialog();
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.menu_sancionados_contextual, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
+        Sancionado selectedSancionado = mSancionadoAdapter.getItem(position);
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                if (selectedSancionado.getStrikes() != null) {
+                    Intent shareIntent = getShareIntentForSancionado(selectedSancionado);
+                    startActivity(Intent.createChooser(shareIntent, getString(R.string.select_action)));
+                }
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    public Intent getShareIntentForSancionado(Sancionado sancionado) {
+        String shareMsg = getString(R.string.users_strikes) + " *" + sancionado.getName() + "*:\n";
+
+        for (Map.Entry<String, Strike> entry : sancionado.getStrikes().entrySet()) {
+            Strike strike = entry.getValue();
+            shareMsg += "\n" + strike.getDate();
+            shareMsg += "\n" + strike.getReason() + "\n";
+        }
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, shareMsg)
+                .setType("text/plain");
+        return shareIntent;
     }
 
     private void showAlertDialog() {
