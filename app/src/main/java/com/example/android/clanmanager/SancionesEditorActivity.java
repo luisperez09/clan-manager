@@ -73,12 +73,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         mStrikeAdapter.clear();
         detachDatabaseListener();
     }
