@@ -3,6 +3,7 @@ package com.example.android.clanmanager;
 public class Strike {
     private String date;
     private String reason;
+    private String key;
 
     public Strike(String date, String reason) {
         this.date = date;
@@ -27,5 +28,13 @@ public class Strike {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

@@ -7,7 +7,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -57,6 +61,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         mStrikeAdapter = new StrikeAdapter(this, strikes);
         mListView = (ListView) findViewById(R.id.strikes_list);
         mListView.setAdapter(mStrikeAdapter);
+        registerForContextMenu(mListView);
         mProgressBar = (ProgressBar) findViewById(R.id.pb_sanciones_editor);
 
         mSancionadoTextView = (TextView) findViewById(R.id.sancionado_text_view);
@@ -65,7 +70,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlertDialog();
+                showAddAlertDialog();
             }
         });
     }
@@ -84,7 +89,27 @@ public class SancionesEditorActivity extends AppCompatActivity {
         detachDatabaseListener();
     }
 
-    private void showAlertDialog() {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle(R.string.select_action);
+        getMenuInflater().inflate(R.menu.menu_editor_contextual, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
+        Strike selectedStrike = mStrikeAdapter.getItem(position);
+        String key = selectedStrike.getKey();
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                showEditAlertDialog(selectedStrike.getReason());
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void showAddAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(EDITTEXT_INPUT_LIMIT)});
@@ -111,6 +136,42 @@ public class SancionesEditorActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void showEditAlertDialog(String reason) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(EDITTEXT_INPUT_LIMIT)});
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setText(reason);
+        input.setSelectAllOnFocus(true);
+        builder.setView(input);
+        builder.setTitle("Editar motivo")
+                .setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String inputText = input.getText().toString().trim();
+                        if (!inputText.isEmpty()) {
+                            mStrikeReason = inputText;
+                            dialogInterface.dismiss();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        final AlertDialog dialog = builder.show();
+        input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+    }
+
     private void pushNewStrike() {
         String date = DateFormat.getDateInstance().format(new Date());
         Strike strike = new Strike(date, mStrikeReason);
@@ -124,6 +185,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Strike strike = dataSnapshot.getValue(Strike.class);
+                    String key = dataSnapshot.getKey();
+                    strike.setKey(key);
                     mStrikeAdapter.add(strike);
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }
