@@ -33,6 +33,7 @@ public class SancionadoAdapter extends ArrayAdapter<Sancionado> {
         if (currentSancionado.getStrikes() != null) {
             TextView sancionesAmmountTextView = (TextView) listItemView
                     .findViewById(R.id.sanciones_ammount_text_view);
+            sancionesAmmountTextView.setText("");
             int numStrikes = currentSancionado.getStrikes().size();
             for (int count = 0; count < numStrikes; count++) {
                 sancionesAmmountTextView.append("X ");
