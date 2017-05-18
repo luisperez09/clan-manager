@@ -125,7 +125,7 @@ public class SancionadoListActivity extends AppCompatActivity {
         builder.setTitle("Sancionar a:");
 
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         builder.setView(input)
                 .setPositiveButton("Sancionar", new DialogInterface.OnClickListener() {
                     @Override

@@ -87,7 +87,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(EDITTEXT_INPUT_LIMIT)});
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         builder.setView(input);
         builder.setTitle("Motivo del strike")
                 .setPositiveButton("Agregar strike", new DialogInterface.OnClickListener() {
