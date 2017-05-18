@@ -94,6 +94,10 @@ public class SancionadoListActivity extends AppCompatActivity {
                 if (selectedSancionado.getStrikes() != null) {
                     Intent shareIntent = getShareIntentForSancionado(selectedSancionado);
                     startActivity(Intent.createChooser(shareIntent, getString(R.string.select_action)));
+                } else {
+                    Toast.makeText(this,
+                            getString(R.string.no_strikes_message, selectedSancionado.getName()),
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
