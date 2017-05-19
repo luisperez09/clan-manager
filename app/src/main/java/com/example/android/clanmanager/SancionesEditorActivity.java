@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SancionesEditorActivity extends AppCompatActivity {
 
@@ -104,7 +106,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         String key = selectedStrike.getKey();
         switch (item.getItemId()) {
             case R.id.action_edit:
-                showEditAlertDialog(selectedStrike.getReason());
+                showEditAlertDialog(selectedStrike);
         }
         return super.onContextItemSelected(item);
     }
@@ -136,12 +138,12 @@ public class SancionesEditorActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void showEditAlertDialog(String reason) {
+    private void showEditAlertDialog(final Strike strike) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(EDITTEXT_INPUT_LIMIT)});
         input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-        input.setText(reason);
+        input.setText(strike.getReason());
         input.setSelectAllOnFocus(true);
         builder.setView(input);
         builder.setTitle("Editar motivo")
@@ -151,6 +153,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
                         String inputText = input.getText().toString().trim();
                         if (!inputText.isEmpty()) {
                             mStrikeReason = inputText;
+                            updateStrike(strike);
                             dialogInterface.dismiss();
                         }
                     }
@@ -161,7 +164,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
                         dialogInterface.dismiss();
                     }
                 });
-        final AlertDialog dialog = builder.show();
+        final AlertDialog dialog = builder.create();
         input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -170,6 +173,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
                 }
             }
         });
+        dialog.show();
     }
 
     private void pushNewStrike() {
@@ -177,6 +181,14 @@ public class SancionesEditorActivity extends AppCompatActivity {
         Strike strike = new Strike(date, mStrikeReason);
         mUserStrikesReference.push().setValue(strike);
         Toast.makeText(this, "Se agregó el strike", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateStrike(Strike strike) {
+        DatabaseReference strikeReference = mUserStrikesReference.child(strike.getKey());
+        Map<String, Object> childUpdate = new HashMap<>();
+        strike.setReason(mStrikeReason);
+        childUpdate.put("reason", strike.getReason());
+        strikeReference.updateChildren(childUpdate);
     }
 
     private void attachDatabaseListener() {
