@@ -39,6 +39,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private ListView mListView;
     private StrikeAdapter mStrikeAdapter;
+    private ArrayList<Strike> mStrikesList;
+    private int mAdapterPosition;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserStrikesReference;
     private ChildEventListener mChildEventListener;
@@ -59,8 +61,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserStrikesReference = mFirebaseDatabase.getReference().child("sancionados").child(key).child("strikes");
 
-        ArrayList<Strike> strikes = new ArrayList<>();
-        mStrikeAdapter = new StrikeAdapter(this, strikes);
+        mStrikesList = new ArrayList<>();
+        mStrikeAdapter = new StrikeAdapter(this, mStrikesList);
         mListView = (ListView) findViewById(R.id.strikes_list);
         mListView.setAdapter(mStrikeAdapter);
         registerForContextMenu(mListView);
@@ -101,8 +103,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = info.position;
-        Strike selectedStrike = mStrikeAdapter.getItem(position);
+        mAdapterPosition = info.position;
+        Strike selectedStrike = mStrikeAdapter.getItem(mAdapterPosition);
         switch (item.getItemId()) {
             case R.id.action_edit:
                 showEditAlertDialog(selectedStrike);
@@ -249,6 +251,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    mStrikesList.remove(mAdapterPosition);
+                    mStrikeAdapter.notifyDataSetChanged();
                 }
 
                 @Override
