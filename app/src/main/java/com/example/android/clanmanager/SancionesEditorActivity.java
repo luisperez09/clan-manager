@@ -103,10 +103,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
         Strike selectedStrike = mStrikeAdapter.getItem(position);
-        String key = selectedStrike.getKey();
         switch (item.getItemId()) {
             case R.id.action_edit:
                 showEditAlertDialog(selectedStrike);
+                break;
+            case R.id.action_delete:
+                showDeleteDialog(selectedStrike);
+                break;
         }
         return super.onContextItemSelected(item);
     }
@@ -185,6 +188,27 @@ public class SancionesEditorActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showDeleteDialog(final Strike strike) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("¿Eliminar este strike?")
+                .setMessage("Esta acción no se puede deshacer")
+                .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteStrike(strike);
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+        builder.show();
+    }
+
     private void pushNewStrike() {
         String date = DateFormat.getDateInstance().format(new Date());
         Strike strike = new Strike(date, mStrikeReason);
@@ -198,6 +222,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
         strike.setReason(mStrikeReason);
         childUpdate.put("reason", strike.getReason());
         strikeReference.updateChildren(childUpdate);
+        Toast.makeText(this, "Se actualizó el strike", Toast.LENGTH_SHORT).show();
+    }
+
+    private void deleteStrike(Strike strike) {
+        DatabaseReference strikeReference = mUserStrikesReference.child(strike.getKey());
+        strikeReference.removeValue();
+        Toast.makeText(this, "Se eliminó el strike", Toast.LENGTH_SHORT).show();
     }
 
     private void attachDatabaseListener() {
