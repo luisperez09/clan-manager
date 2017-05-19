@@ -135,7 +135,16 @@ public class SancionesEditorActivity extends AppCompatActivity {
                         dialogInterface.dismiss();
                     }
                 });
-        builder.show();
+        final AlertDialog dialog = builder.create();
+        input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        dialog.show();
     }
 
     private void showEditAlertDialog(final Strike strike) {
