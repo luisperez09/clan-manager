@@ -1,9 +1,9 @@
 package com.example.android.clanmanager;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,7 +14,7 @@ public class BannedActivity extends AppCompatActivity {
 
     private EditText mBannedEditText;
     private EditText mReasonEditText;
-    private Button mSubmitBanButton;
+    private FloatingActionButton mSubmitBanButton;
 
     // Firebase instance variables
     FirebaseDatabase mFirebaseDatabase;
@@ -30,7 +30,7 @@ public class BannedActivity extends AppCompatActivity {
 
         mBannedEditText = (EditText) findViewById(R.id.banned_name);
         mReasonEditText = (EditText) findViewById(R.id.banned_reason);
-        mSubmitBanButton = (Button) findViewById(R.id.submit_new_banned_button);
+        mSubmitBanButton = (FloatingActionButton) findViewById(R.id.submit_new_banned_button);
 
         mSubmitBanButton.setOnClickListener(new View.OnClickListener() {
             @Override

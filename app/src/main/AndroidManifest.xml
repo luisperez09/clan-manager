@@ -34,7 +34,8 @@
         <activity
             android:name=".BannedActivity"
             android:label="@string/ban_appbar_label"
-            android:parentActivityName=".BlacklistActivity">
+            android:parentActivityName=".BlacklistActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".BlacklistActivity" />
