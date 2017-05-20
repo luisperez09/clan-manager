@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Clan Manager</string>
     <string name="about_label">Acerca de esta app</string>
     <string name="sign_out_label">Cerrar sesión</string>
@@ -26,4 +26,18 @@
     <string name="ban_action">Banear</string>
     <string name="user_has_been_banned">Usuario baneado</string>
     <string name="all_fields_required">Debe llenar todos los campos</string>
+
+    <string name="users_strikes">Strikes de</string>
+
+    <string name="sancionado_empty_view_text">No hay sancionados</string>
+    <string name="strikes_empty_view_text">No hay strikes</string>
+    <string name="banned_empty_view_text">No hay baneados</string>
+
+    <string name="share">Compartir strikes</string>
+    <string name="share_all">Compartir lista de strikes</string>
+    <string name="select_action">Seleccione acción</string>
+    <string name="no_strikes_message"><xliff:g id="name">%s</xliff:g> aún no tiene strikes</string>
+
+    <string name="action_edit_strike">Editar motivo del strike</string>
+    <string name="action_delete_strike">Eliminar strike</string>
 </resources>

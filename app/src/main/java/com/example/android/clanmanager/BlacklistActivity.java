@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class BlacklistActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mBannedDatabaseReference;
     private ChildEventListener mChildEventListener;
+    private ValueEventListener mEmptyCheckListener;
 
     private ListView mlistView;
     private BannedAdapter mBannedAdapter;
@@ -53,15 +55,15 @@ public class BlacklistActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         mBannedAdapter.clear();
         dettachDatabaseListener();
     }
@@ -94,12 +96,35 @@ public class BlacklistActivity extends AppCompatActivity {
             };
             mBannedDatabaseReference.addChildEventListener(mChildEventListener);
         }
+        if (mEmptyCheckListener == null) {
+            mEmptyCheckListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        View emptyView = findViewById(R.id.banned_empty_view);
+                        emptyView.setVisibility(View.VISIBLE);
+                        mlistView.setEmptyView(emptyView);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mBannedDatabaseReference.addListenerForSingleValueEvent(mEmptyCheckListener);
+        }
     }
 
     private void dettachDatabaseListener() {
         if (mChildEventListener != null) {
             mBannedDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
+        }
+        if (mEmptyCheckListener != null) {
+            mBannedDatabaseReference.removeEventListener(mEmptyCheckListener);
+            mEmptyCheckListener = null;
         }
     }
 }

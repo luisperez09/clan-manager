@@ -2,19 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_blacklist"
+    android:id="@+id/activity_sancionado_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.clanmanager.BlacklistActivity">
+    tools:context="com.example.android.clanmanager.SancionadoListActivity">
 
     <ListView
-        android:id="@+id/banned_list"
+        android:id="@+id/sancionados_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/add_sancionado_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -25,18 +24,17 @@
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <ProgressBar
-        android:id="@+id/blacklist_progress_bar"
+        android:id="@+id/sancionado_progress_bar"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerInParent="true" />
 
     <TextView
-        android:id="@+id/banned_empty_view"
+        android:id="@+id/sancionado_empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/banned_empty_view_text"
+        android:text="@string/sancionado_empty_view_text"
         android:textSize="18sp"
         android:visibility="invisible" />
-
 </RelativeLayout>

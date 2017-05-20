@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="68dp"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+
 
     <LinearLayout
         android:id="@+id/text_container"
@@ -14,26 +14,27 @@
         android:paddingLeft="16dp">
 
         <TextView
-            android:id="@+id/option_text_view"
+            android:id="@+id/sancionado_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="bottom"
-            android:maxLines="1"
+            android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            tools:text="Sancionados" />
+            tools:text="Hueso" />
 
         <TextView
-            android:id="@+id/summary_text_view"
+            android:id="@+id/sanciones_ammount_text_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="top"
-            android:textColor="#ababab"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorAccent"
             android:textSize="16sp"
-            tools:text="Strikes de los usuarios" />
+            android:textStyle="bold"
+            tools:text="X X" />
 
     </LinearLayout>
+
 
 </RelativeLayout>
