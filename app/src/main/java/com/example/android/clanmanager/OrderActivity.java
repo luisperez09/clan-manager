@@ -66,6 +66,12 @@ public class OrderActivity extends AppCompatActivity {
         attachDatabaseListeners();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        detachDatabaseListeners();
+    }
+
     private void showAddColeaderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
@@ -160,6 +166,17 @@ public class OrderActivity extends AppCompatActivity {
                 }
             };
             mColeadersReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    public void detachDatabaseListeners() {
+        if (mChildEventListener != null) {
+            mColeadersReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+        if (mEmptyCheckListener != null) {
+            mColeadersReference.removeEventListener(mEmptyCheckListener);
+            mEmptyCheckListener = null;
         }
     }
 }
