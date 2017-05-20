@@ -22,8 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class OrderActivity extends AppCompatActivity {
 
@@ -36,6 +35,7 @@ public class OrderActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private ListView mListView;
+    private TwoLineAdapter mTwoLineAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,10 @@ public class OrderActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mColeadersReference = mFirebaseDatabase.getReference().child("coleaders");
 
+        ArrayList<Object> data = new ArrayList<>();
+        mTwoLineAdapter = new TwoLineAdapter(this, data);
         mListView = (ListView) findViewById(R.id.coleaders_list);
+        mListView.setAdapter(mTwoLineAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.coleaders_pb);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_coleader_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -99,9 +102,8 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void addNewColeader(String coleaderName) {
-        Map<String, Boolean> responsible = new HashMap<>();
-        responsible.put("responsible", false);
-        mColeadersReference.child(coleaderName).setValue(responsible);
+        Coleader coleader = new Coleader(coleaderName, false);
+        mColeadersReference.push().setValue(coleader);
         Toast.makeText(this, "Se agregó el colíder", Toast.LENGTH_SHORT).show();
     }
 
@@ -131,6 +133,10 @@ public class OrderActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Log.w("OrderActivity", "Child added");
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    Coleader coleader = dataSnapshot.getValue(Coleader.class);
+                    mTwoLineAdapter.add(coleader);
+
                 }
 
                 @Override
