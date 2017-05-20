@@ -36,10 +36,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private static boolean primerLogin = true;
     /**
-     * Número de release de la app
-     */
-    private static final int CURRENT_APP_VERSION = 1;
-    /**
      * Key de la versión de la app en la consola de Firebase
      */
     private static final String APP_VERSION_KEY = "app_version";
@@ -113,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
 
         Map<String, Object> defaultConfigMap = new HashMap<>();
-        defaultConfigMap.put(APP_VERSION_KEY, CURRENT_APP_VERSION);
+        defaultConfigMap.put(APP_VERSION_KEY, BuildConfig.VERSION_CODE);
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
         fetchConfig();
     }
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     private void compareAppVersion() {
         Long app_version = mFirebaseRemoteConfig.getLong(APP_VERSION_KEY);
         int fetchedAppVersion = app_version.intValue();
-        if (fetchedAppVersion > CURRENT_APP_VERSION) {
+        if (fetchedAppVersion > BuildConfig.VERSION_CODE) {
             Log.w(TAG, "Update available");
             finish();
             Toast.makeText(this, "Hay una nueva versión disponible", Toast.LENGTH_LONG).show();

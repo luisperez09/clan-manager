@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.clanmanager.utils.MapUtils;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SancionadoListActivity extends AppCompatActivity {
@@ -41,6 +44,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     private String mSancionadoInput;
     private ProgressBar mProgressBar;
     private ListView mListView;
+    private Map<String, Integer> mShareListMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,8 @@ public class SancionadoListActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mSancionadosReference = mFirebaseDatabase.getReference().child("sancionados");
+
+        mShareListMap = new HashMap<>();
 
         final ArrayList<Sancionado> sancionados = new ArrayList<Sancionado>();
         mSancionadoAdapter = new SancionadoAdapter(this, sancionados);
@@ -106,7 +112,46 @@ public class SancionadoListActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    public Intent getShareIntentForSancionado(Sancionado sancionado) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_sancionados, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                shareList();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareList() {
+        if (mShareListMap.size() > 0) {
+            Map<String, Integer> sortedMap = MapUtils.sortByValue(mShareListMap);
+            int currentValue = 999;
+            String shareMessage = "*Lista de Strikes:*\n";
+            for (Map.Entry<String, Integer> entry : sortedMap.entrySet()) {
+                if (entry.getValue() < currentValue) {
+                    currentValue = entry.getValue();
+                    shareMessage += "\nCon *" + currentValue + "* strikes:\n";
+                }
+                shareMessage += "-" + entry.getKey() + "\n";
+            }
+            Intent shareListIntent = new Intent();
+            shareListIntent.setAction(Intent.ACTION_SEND)
+                    .putExtra(Intent.EXTRA_TEXT, shareMessage)
+                    .setType("text/plain");
+            startActivity(Intent.createChooser(shareListIntent, getString(R.string.select_action)));
+
+        } else {
+            Toast.makeText(this, "No hay ningún strike", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Intent getShareIntentForSancionado(Sancionado sancionado) {
         String shareMsg = getString(R.string.users_strikes) + " *" + sancionado.getName() + "*:\n";
 
         for (Map.Entry<String, Strike> entry : sancionado.getStrikes().entrySet()) {
@@ -193,6 +238,7 @@ public class SancionadoListActivity extends AppCompatActivity {
                         int totalSanciones = sancionado.getStrikes().size();
                         Log.w("MainActivity", sancionado.getName() + " está sancionado con: "
                                 + totalSanciones + " sanciones");
+                        mShareListMap.put(sancionado.getName(), totalSanciones);
                     }
                 }
 
