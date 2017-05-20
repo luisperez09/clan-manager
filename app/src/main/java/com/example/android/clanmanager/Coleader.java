@@ -4,6 +4,7 @@ package com.example.android.clanmanager;
 public class Coleader {
     private String name;
     private boolean responsible;
+    private String key;
 
     public Coleader() {
 
@@ -30,4 +31,11 @@ public class Coleader {
         this.responsible = responsible;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

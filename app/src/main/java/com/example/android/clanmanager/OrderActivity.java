@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -23,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrderActivity extends AppCompatActivity {
 
@@ -36,6 +39,7 @@ public class OrderActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private ListView mListView;
     private TwoLineAdapter mTwoLineAdapter;
+    private String mCurrentResponsible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,15 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 showAddColeaderDialog();
+            }
+        });
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Coleader currentColeader = (Coleader) mTwoLineAdapter.getItem(position);
+                String newResponsibleKey = currentColeader.getKey();
+                showAlertDialog(newResponsibleKey);
+                return true;
             }
         });
     }
@@ -107,6 +120,32 @@ public class OrderActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showAlertDialog(final String key) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("¿Delegar responsabilidad?")
+                .setPositiveButton("Delegar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Map<String, Object> noLongerResponsible = new HashMap<>();
+                        noLongerResponsible.put("responsible", false);
+                        mColeadersReference.child(mCurrentResponsible).updateChildren(noLongerResponsible);
+
+                        Map<String, Object> newResponsible = new HashMap<>();
+                        newResponsible.put("responsible", true);
+                        mColeadersReference.child(key).updateChildren(newResponsible);
+
+                        mCurrentResponsible = key;
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        builder.show();
+    }
+
     private void addNewColeader(String coleaderName) {
         Coleader coleader = new Coleader(coleaderName, false);
         mColeadersReference.push().setValue(coleader);
@@ -141,7 +180,11 @@ public class OrderActivity extends AppCompatActivity {
                     Log.w("OrderActivity", "Child added");
                     mProgressBar.setVisibility(View.INVISIBLE);
                     Coleader coleader = dataSnapshot.getValue(Coleader.class);
+                    coleader.setKey(dataSnapshot.getKey());
                     mTwoLineAdapter.add(coleader);
+                    if (coleader.isResponsible()) {
+                        mCurrentResponsible = dataSnapshot.getKey();
+                    }
 
                 }
 
