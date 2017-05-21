@@ -129,26 +129,7 @@ public class OrderActivity extends AppCompatActivity {
                 .setPositiveButton("Delegar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Map<String, Object> noLongerResponsible = new HashMap<>();
-                        noLongerResponsible.put("responsible", false);
-                        mColeadersReference.child(mCurrentResponsible).updateChildren(noLongerResponsible);
-
-                        Map<String, Object> newResponsible = new HashMap<>();
-                        newResponsible.put("responsible", true);
-                        mColeadersReference.child(key).updateChildren(newResponsible);
-
-                        mCurrentResponsible = key;
-
-                        Coleader previous = (Coleader) mData.get(mCurrentResponsiblePosition);
-                        previous.setResponsible(false);
-                        mData.set(mCurrentResponsiblePosition, previous);
-
-                        Coleader current = (Coleader) mData.get(position);
-                        current.setResponsible(true);
-                        mData.set(position, current);
-
-                        mCurrentResponsiblePosition = position;
-                        mTwoLineAdapter.notifyDataSetChanged();
+                        delegateResponsibility(key, position);
                         Toast.makeText(OrderActivity.this, "Se delegó la responsabilidad", Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -159,6 +140,29 @@ public class OrderActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+    }
+
+    private void delegateResponsibility(String key, int position) {
+        Map<String, Object> noLongerResponsible = new HashMap<>();
+        noLongerResponsible.put("responsible", false);
+        mColeadersReference.child(mCurrentResponsible).updateChildren(noLongerResponsible);
+
+        Map<String, Object> newResponsible = new HashMap<>();
+        newResponsible.put("responsible", true);
+        mColeadersReference.child(key).updateChildren(newResponsible);
+
+        mCurrentResponsible = key;
+
+        Coleader previous = (Coleader) mData.get(mCurrentResponsiblePosition);
+        previous.setResponsible(false);
+        mData.set(mCurrentResponsiblePosition, previous);
+
+        Coleader current = (Coleader) mData.get(position);
+        current.setResponsible(true);
+        mData.set(position, current);
+
+        mCurrentResponsiblePosition = position;
+        mTwoLineAdapter.notifyDataSetChanged();
     }
 
     private void addNewColeader(String coleaderName) {
