@@ -282,7 +282,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
                 }
             };
-            mUserStrikesReference.addListenerForSingleValueEvent(mEmptyCheckListener);
+            mUserStrikesReference.addValueEventListener(mEmptyCheckListener);
         }
     }
 

@@ -57,12 +57,13 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         TextView nameTextView = (TextView) lv.findViewById(R.id.option_text_view);
         nameTextView.setText(currentSancionado.getName());
 
+        TextView strikesAmmountTextView = (TextView) lv.findViewById(R.id.summary_text_view);
+        strikesAmmountTextView.setText("");
+
         if (currentSancionado.getStrikes() != null) {
-            TextView strikesAmmountTextView = (TextView) lv
-                    .findViewById(R.id.summary_text_view);
-            strikesAmmountTextView.setText("");
             strikesAmmountTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
             strikesAmmountTextView.setTypeface(strikesAmmountTextView.getTypeface(), Typeface.BOLD);
+
             int numStrikes = currentSancionado.getStrikes().size();
             for (int count = 0; count < numStrikes; count++) {
                 strikesAmmountTextView.append("X ");
