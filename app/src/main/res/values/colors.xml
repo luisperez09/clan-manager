@@ -8,5 +8,10 @@
 
     <color name="colorPrimaryDark">#2D3640</color>
 
-    <color name="colorResponsibleBackground">#caf9d4</color>
+    <color name="colorResponsibleBackground">#CAF9D4</color>
+
+    <color name="colorResponsibleBackgroundPressed">#A7D6B1</color>
+
+    <color name="activated">#E0E0E0</color>
+
 </resources>
