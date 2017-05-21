@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
->
+    >
 
     <color name="colorAccent">#F0514B</color>
 
     <color name="colorPrimary">#394450</color>
 
     <color name="colorPrimaryDark">#2D3640</color>
+
+    <color name="colorResponsibleBackground">#CAF9D4</color>
+
+    <color name="colorResponsibleBackgroundPressed">#A7D6B1</color>
+
+    <color name="activated">#E0E0E0</color>
+
 </resources>

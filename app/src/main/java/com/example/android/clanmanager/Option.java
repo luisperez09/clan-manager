@@ -8,7 +8,6 @@ import android.content.Intent;
  * Maneja opciones a mostrar en MainActivity
  */
 public class Option {
-    private int mImageResourceId;
     private String mDescription;
     private String mSummary;
     private Class mClass;

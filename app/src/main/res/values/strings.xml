@@ -32,6 +32,7 @@
     <string name="sancionado_empty_view_text">No hay sancionados</string>
     <string name="strikes_empty_view_text">No hay strikes</string>
     <string name="banned_empty_view_text">No hay baneados</string>
+    <string name="no_coleaders">No se han agregado colíderes</string>
 
     <string name="share">Compartir strikes</string>
     <string name="share_all">Compartir lista de strikes</string>

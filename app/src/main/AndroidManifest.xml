@@ -47,6 +47,10 @@
         <activity
             android:name=".SancionesEditorActivity"
             android:parentActivityName=".SancionadoListActivity" />
+        <activity
+            android:name=".OrderActivity"
+            android:label="@string/war_order_label"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

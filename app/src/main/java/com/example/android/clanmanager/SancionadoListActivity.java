@@ -38,7 +38,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mSancionadosReference;
     private ChildEventListener mChildEventListener;
-    private SancionadoAdapter mSancionadoAdapter;
+    private TwoLineAdapter mSancionadoAdapter;
     private ValueEventListener mEmptyCheckListener;
 
     private String mSancionadoInput;
@@ -56,8 +56,8 @@ public class SancionadoListActivity extends AppCompatActivity {
 
         mShareListMap = new HashMap<>();
 
-        final ArrayList<Sancionado> sancionados = new ArrayList<Sancionado>();
-        mSancionadoAdapter = new SancionadoAdapter(this, sancionados);
+        final ArrayList<Object> sancionados = new ArrayList<>();
+        mSancionadoAdapter = new TwoLineAdapter(this, sancionados);
         mListView = (ListView) findViewById(R.id.sancionados_list);
         mListView.setAdapter(mSancionadoAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.sancionado_progress_bar);
@@ -65,7 +65,7 @@ public class SancionadoListActivity extends AppCompatActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Sancionado clickedSancionado = mSancionadoAdapter.getItem(position);
+                Sancionado clickedSancionado = (Sancionado) mSancionadoAdapter.getItem(position);
                 String key = clickedSancionado.getKey();
                 Intent intent = new Intent(SancionadoListActivity.this, SancionesEditorActivity.class);
                 intent.putExtra("key", key)
@@ -95,7 +95,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        Sancionado selectedSancionado = mSancionadoAdapter.getItem(position);
+        Sancionado selectedSancionado = (Sancionado) mSancionadoAdapter.getItem(position);
         switch (item.getItemId()) {
             case R.id.action_share:
                 if (selectedSancionado.getStrikes() != null) {
