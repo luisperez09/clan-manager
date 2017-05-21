@@ -38,9 +38,11 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         Coleader coleader = (Coleader) getItem(position);
         TextView mainTextView = (TextView) lv.findViewById(R.id.option_text_view);
         mainTextView.setText(coleader.getName());
+        LinearLayout container = (LinearLayout) lv.findViewById(R.id.text_container);
         if (coleader.isResponsible()) {
-            LinearLayout container = (LinearLayout) lv.findViewById(R.id.text_container);
-            container.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorResponsibleBackground));
+            container.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.responsible_selector));
+        } else {
+            container.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.touch_selector));
         }
         return lv;
     }

@@ -38,8 +38,10 @@ public class OrderActivity extends AppCompatActivity {
 
     private ProgressBar mProgressBar;
     private ListView mListView;
+    private ArrayList<Object> mData;
     private TwoLineAdapter mTwoLineAdapter;
     private String mCurrentResponsible;
+    private int mCurrentResponsiblePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,8 @@ public class OrderActivity extends AppCompatActivity {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mColeadersReference = mFirebaseDatabase.getReference().child("coleaders");
 
-        ArrayList<Object> data = new ArrayList<>();
-        mTwoLineAdapter = new TwoLineAdapter(this, data);
+        mData = new ArrayList<>();
+        mTwoLineAdapter = new TwoLineAdapter(this, mData);
         mListView = (ListView) findViewById(R.id.coleaders_list);
         mListView.setAdapter(mTwoLineAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.coleaders_pb);
@@ -66,7 +68,7 @@ public class OrderActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Coleader currentColeader = (Coleader) mTwoLineAdapter.getItem(position);
                 String newResponsibleKey = currentColeader.getKey();
-                showAlertDialog(newResponsibleKey);
+                showAlertDialog(newResponsibleKey, position);
                 return true;
             }
         });
@@ -82,6 +84,7 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        mTwoLineAdapter.clear();
         detachDatabaseListeners();
     }
 
@@ -120,7 +123,7 @@ public class OrderActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showAlertDialog(final String key) {
+    private void showAlertDialog(final String key, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("¿Delegar responsabilidad?")
                 .setPositiveButton("Delegar", new DialogInterface.OnClickListener() {
@@ -135,6 +138,18 @@ public class OrderActivity extends AppCompatActivity {
                         mColeadersReference.child(key).updateChildren(newResponsible);
 
                         mCurrentResponsible = key;
+
+                        Coleader previous = (Coleader) mData.get(mCurrentResponsiblePosition);
+                        previous.setResponsible(false);
+                        mData.set(mCurrentResponsiblePosition, previous);
+
+                        Coleader current = (Coleader) mData.get(position);
+                        current.setResponsible(true);
+                        mData.set(position, current);
+
+                        mCurrentResponsiblePosition = position;
+                        mTwoLineAdapter.notifyDataSetChanged();
+                        Toast.makeText(OrderActivity.this, "Se delegó la responsabilidad", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -184,6 +199,7 @@ public class OrderActivity extends AppCompatActivity {
                     mTwoLineAdapter.add(coleader);
                     if (coleader.isResponsible()) {
                         mCurrentResponsible = dataSnapshot.getKey();
+                        mCurrentResponsiblePosition = mData.size() - 1;
                     }
 
                 }
