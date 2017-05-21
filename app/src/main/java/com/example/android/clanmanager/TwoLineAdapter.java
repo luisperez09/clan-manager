@@ -1,6 +1,7 @@
 package com.example.android.clanmanager;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -29,6 +30,8 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         Object o = getItem(position);
         if (o instanceof Coleader) {
             listItemView = setupColeaderView(listItemView, position);
+        } else if (o instanceof Sancionado) {
+            setupSancionadosList(listItemView, position);
         }
 
         return listItemView;
@@ -43,6 +46,25 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
             container.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.responsible_selector));
         } else {
             container.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.touch_selector));
+        }
+        return lv;
+    }
+
+    private View setupSancionadosList(View lv, int position) {
+        Sancionado currentSancionado = (Sancionado) getItem(position);
+        TextView nameTextView = (TextView) lv.findViewById(R.id.option_text_view);
+        nameTextView.setText(currentSancionado.getName());
+
+        if (currentSancionado.getStrikes() != null) {
+            TextView strikesAmmountTextView = (TextView) lv
+                    .findViewById(R.id.summary_text_view);
+            strikesAmmountTextView.setText("");
+            strikesAmmountTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+            strikesAmmountTextView.setTypeface(strikesAmmountTextView.getTypeface(), Typeface.BOLD);
+            int numStrikes = currentSancionado.getStrikes().size();
+            for (int count = 0; count < numStrikes; count++) {
+                strikesAmmountTextView.append("X ");
+            }
         }
         return lv;
     }
