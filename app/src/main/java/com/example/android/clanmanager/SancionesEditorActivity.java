@@ -38,8 +38,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
     private TextView mSancionadoTextView;
     private ProgressBar mProgressBar;
     private ListView mListView;
-    private StrikeAdapter mStrikeAdapter;
-    private ArrayList<Strike> mStrikesList;
+    private TwoLineAdapter mStrikeAdapter;
+    private ArrayList<Object> mStrikesList;
     private int mAdapterPosition;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUserStrikesReference;
@@ -62,7 +62,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         mUserStrikesReference = mFirebaseDatabase.getReference().child("sancionados").child(key).child("strikes");
 
         mStrikesList = new ArrayList<>();
-        mStrikeAdapter = new StrikeAdapter(this, mStrikesList);
+        mStrikeAdapter = new TwoLineAdapter(this, mStrikesList);
         mListView = (ListView) findViewById(R.id.strikes_list);
         mListView.setAdapter(mStrikeAdapter);
         registerForContextMenu(mListView);
@@ -104,7 +104,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         mAdapterPosition = info.position;
-        Strike selectedStrike = mStrikeAdapter.getItem(mAdapterPosition);
+        Strike selectedStrike = (Strike) mStrikeAdapter.getItem(mAdapterPosition);
         switch (item.getItemId()) {
             case R.id.action_edit:
                 showEditAlertDialog(selectedStrike);

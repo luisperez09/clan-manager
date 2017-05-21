@@ -32,6 +32,8 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
             listItemView = setupColeaderView(listItemView, position);
         } else if (o instanceof Sancionado) {
             setupSancionadosList(listItemView, position);
+        } else if (o instanceof Strike) {
+            setupStrike(listItemView, position);
         }
 
         return listItemView;
@@ -66,6 +68,20 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
                 strikesAmmountTextView.append("X ");
             }
         }
+        return lv;
+    }
+
+    private View setupStrike(View lv, int position) {
+        Strike currentStrike = (Strike) getItem(position);
+
+        String date = currentStrike.getDate();
+        TextView dateTextView = (TextView) lv.findViewById(R.id.summary_text_view);
+        dateTextView.setText(date);
+
+        String reason = currentStrike.getReason();
+        TextView reasonTextView = (TextView) lv.findViewById(R.id.option_text_view);
+        reasonTextView.setText(reason);
+
         return lv;
     }
 }
