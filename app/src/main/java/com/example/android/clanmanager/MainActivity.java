@@ -56,19 +56,19 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        final ArrayList<Option> options = new ArrayList<Option>();
+        final ArrayList<Object> options = new ArrayList<>();
         options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary), this, SancionadoListActivity.class));
         options.add(new Option(getString(R.string.war_order_label), getString(R.string.war_order_summary), this, OrderActivity.class));
         options.add(new Option(getString(R.string.black_list_label), getString(R.string.black_list_summary), this, BlacklistActivity.class));
 
-        OptionAdapter adapter = new OptionAdapter(this, options);
+        TwoLineAdapter adapter = new TwoLineAdapter(this, options);
         ListView listView = (ListView) findViewById(R.id.list_options);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Option currentOption = options.get(position);
+                Option currentOption = (Option) options.get(position);
                 Intent intent = currentOption.getOptionIntent();
                 if (intent != null) {
                     startActivity(intent);

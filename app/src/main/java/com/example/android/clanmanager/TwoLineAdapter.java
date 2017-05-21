@@ -34,6 +34,8 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
             setupSancionadosList(listItemView, position);
         } else if (o instanceof Strike) {
             setupStrike(listItemView, position);
+        } else if (o instanceof Option) {
+            setupOption(listItemView, position);
         }
 
         return listItemView;
@@ -82,6 +84,17 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         String reason = currentStrike.getReason();
         TextView reasonTextView = (TextView) lv.findViewById(R.id.option_text_view);
         reasonTextView.setText(reason);
+
+        return lv;
+    }
+
+    private View setupOption(View lv, int position) {
+        Option currentOption = (Option) getItem(position);
+        TextView descriptionTextView = (TextView) lv.findViewById(R.id.option_text_view);
+        descriptionTextView.setText(currentOption.getDescription());
+
+        TextView summaryTextView = (TextView) lv.findViewById(R.id.summary_text_view);
+        summaryTextView.setText(currentOption.getSummary());
 
         return lv;
     }
