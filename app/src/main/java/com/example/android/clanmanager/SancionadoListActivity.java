@@ -28,8 +28,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class SancionadoListActivity extends AppCompatActivity {
@@ -133,6 +136,9 @@ public class SancionadoListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_share:
                 shareList();
+                break;
+            case R.id.action_archive:
+                archiveList();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -320,6 +326,13 @@ public class SancionadoListActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void archiveList() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+        Date date = new Date(System.currentTimeMillis());
+        String readableDate = dateFormat.format(date);
+        Toast.makeText(this, readableDate, Toast.LENGTH_SHORT).show();
     }
 
 
