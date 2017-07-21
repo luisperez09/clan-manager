@@ -109,6 +109,10 @@ public class SancionadoListActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.action_edit_sancionado:
+                showEditAlertDialog(selectedSancionado);
+                break;
+
         }
 
         return super.onContextItemSelected(item);
@@ -204,6 +208,45 @@ public class SancionadoListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showEditAlertDialog(final Sancionado sancionado) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Modificar sancionado");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        input.setText(sancionado.getName());
+        input.setSelectAllOnFocus(true);
+        builder.setView(input)
+                .setPositiveButton("Modificar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        String inputText = input.getText().toString().trim();
+                        if (!inputText.isEmpty()) {
+                            mSancionadoInput = inputText;
+                            dialog.dismiss();
+                            modifySancionado(sancionado);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                });
+        final AlertDialog dialog = builder.create();
+        input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -223,6 +266,16 @@ public class SancionadoListActivity extends AppCompatActivity {
         Sancionado sancionado = new Sancionado(mSancionadoInput);
         mSancionadosReference.push().setValue(sancionado);
         Toast.makeText(this, "Nuevo sancionado: " + mSancionadoInput, Toast.LENGTH_SHORT).show();
+    }
+
+    private void modifySancionado(Sancionado sancionado) {
+        DatabaseReference sancionadoReference = mSancionadosReference.child(sancionado.getKey());
+        Map<String, Object> childUpdate = new HashMap<>();
+        sancionado.setName(mSancionadoInput);
+        childUpdate.put("name", sancionado.getName());
+        sancionadoReference.updateChildren(childUpdate);
+        Toast.makeText(this, "Se modificó el sancionado", Toast.LENGTH_SHORT).show();
+
     }
 
 
