@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         options.add(new Option(getString(R.string.sancionados_label), getString(R.string.sancionados_summary), this, SancionadoListActivity.class));
         options.add(new Option(getString(R.string.war_order_label), getString(R.string.war_order_summary), this, OrderActivity.class));
         options.add(new Option(getString(R.string.black_list_label), getString(R.string.black_list_summary), this, BlacklistActivity.class));
+        options.add(new Option(getString(R.string.history_label), getString(R.string.history_summary), this, HistoryActivity.class));
 
         TwoLineAdapter adapter = new TwoLineAdapter(this, options);
         ListView listView = (ListView) findViewById(R.id.list_options);

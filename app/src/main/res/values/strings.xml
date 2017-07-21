@@ -8,6 +8,8 @@
     <string name="war_order_summary">¿Quién lanza la siguiente?</string>
     <string name="black_list_label">Lista negra</string>
     <string name="black_list_summary">Personas no deseadas</string>
+    <string name="history_label">Historial</string>
+    <string name="history_summary">Temporadas pasadas</string>
     <string name="about_text">Clan Manager ofrece herramientas de gestión a los colíderes
     para facilitar el manejo del clan.\n\nPermite llevar una lista de sancionados, mantener el orden
         de lanzamiento de guerra según el colíder que corresponda y almacena una lista de las
@@ -18,7 +20,7 @@
     <string name="copyright">Copyright &#169; 2017. Todos los derechos y zurdos reservados</string>
     <string name="logged_in">Sesión iniciada</string>
     <string name="logged_in_canceled">Inicio de sesión cancelado</string>
-    <string name="under_development">Esta función aún esta bajo desarrollo</string>
+    <string name="under_development">Esta función aún está bajo desarrollo</string>
 
     <string name="ban_member">Banear a:</string>
     <string name="ban_appbar_label">Banear miembro</string>
@@ -36,6 +38,7 @@
 
     <string name="share">Compartir strikes</string>
     <string name="share_all">Compartir lista de strikes</string>
+    <string name="action_archive">Archivar</string>
     <string name="select_action">Seleccione acción</string>
     <string name="no_strikes_message"><xliff:g id="name">%s</xliff:g> aún no tiene strikes</string>
     <string name="edit_sancionado">Modificar sancionado</string>

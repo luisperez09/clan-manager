@@ -51,6 +51,10 @@
             android:name=".OrderActivity"
             android:label="@string/war_order_label"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/history_label"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
