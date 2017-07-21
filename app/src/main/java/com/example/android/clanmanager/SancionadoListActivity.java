@@ -329,10 +329,27 @@ public class SancionadoListActivity extends AppCompatActivity {
     }
 
     private void archiveList() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
-        Date date = new Date(System.currentTimeMillis());
-        String readableDate = dateFormat.format(date);
-        Toast.makeText(this, readableDate, Toast.LENGTH_SHORT).show();
+        int listSize = mSancionadosList.size();
+
+        if (listSize > 0) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+            Date date = new Date(System.currentTimeMillis());
+            String readableDate = dateFormat.format(date);
+
+            DatabaseReference seasonRef = mFirebaseDatabase.getReference().child("history").child(readableDate);
+            DatabaseReference seasonIndex = mFirebaseDatabase.getReference().child("history_index").child(readableDate);
+
+            Map<String, Object> seasonMap = new HashMap<>();
+            for (int i = 0; i < listSize; i++) {
+                Sancionado currentSancionado = (Sancionado) mSancionadosList.get(i);
+                currentSancionado.setKey(null);
+                seasonMap.put(currentSancionado.getName(), currentSancionado);
+            }
+            seasonRef.setValue(seasonMap);
+            seasonIndex.setValue(readableDate);
+        } else {
+            Toast.makeText(this, "No hay sancionados", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
