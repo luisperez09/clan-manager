@@ -6,5 +6,8 @@
     <item
         android:id="@+id/action_edit_sancionado"
         android:title="@string/edit_sancionado" />
+    <item
+        android:id="@+id/action_delete_sancionado"
+        android:title="@string/delete_sancionado" />
 
 </menu>

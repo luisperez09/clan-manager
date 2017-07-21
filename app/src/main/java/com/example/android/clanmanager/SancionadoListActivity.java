@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +40,8 @@ public class SancionadoListActivity extends AppCompatActivity {
     private DatabaseReference mSancionadosReference;
     private ChildEventListener mChildEventListener;
     private TwoLineAdapter mSancionadoAdapter;
+    private ArrayList<Object> mSancionadosList;
+    private int mAdapterPosition;
     private ValueEventListener mEmptyCheckListener;
 
     private String mSancionadoInput;
@@ -58,8 +59,8 @@ public class SancionadoListActivity extends AppCompatActivity {
 
         mShareListMap = new HashMap<>();
 
-        final ArrayList<Object> sancionados = new ArrayList<>();
-        mSancionadoAdapter = new TwoLineAdapter(this, sancionados);
+        mSancionadosList = new ArrayList<>();
+        mSancionadoAdapter = new TwoLineAdapter(this, mSancionadosList);
         mListView = (ListView) findViewById(R.id.sancionados_list);
         mListView.setAdapter(mSancionadoAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.sancionado_progress_bar);
@@ -97,6 +98,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
+        mAdapterPosition = position;
         Sancionado selectedSancionado = (Sancionado) mSancionadoAdapter.getItem(position);
         switch (item.getItemId()) {
             case R.id.action_share:
@@ -112,7 +114,9 @@ public class SancionadoListActivity extends AppCompatActivity {
             case R.id.action_edit_sancionado:
                 showEditAlertDialog(selectedSancionado);
                 break;
-
+            case R.id.action_delete_sancionado:
+                showDeleteAlertDialog(selectedSancionado);
+                break;
         }
 
         return super.onContextItemSelected(item);
@@ -246,6 +250,26 @@ public class SancionadoListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showDeleteAlertDialog(final Sancionado deleted) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Eliminar sancionado")
+                .setMessage("¿Está seguro? Esta acción no se puede deshacer")
+                .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteSancionado(deleted);
+                    }
+                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
 
     @Override
     protected void onStart() {
@@ -278,6 +302,26 @@ public class SancionadoListActivity extends AppCompatActivity {
 
     }
 
+    private void deleteSancionado(Sancionado deleted) {
+        DatabaseReference deletedReference = mSancionadosReference.child(deleted.getKey());
+        deletedReference.removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError error, DatabaseReference databaseReference) {
+                if (error == null) {
+                    Toast.makeText(SancionadoListActivity.this,
+                            "Se eliminó el sancionado",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    Toast.makeText(SancionadoListActivity.this,
+                            "Hubo un error. Intente más tarde",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        });
+    }
+
 
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
@@ -291,8 +335,6 @@ public class SancionadoListActivity extends AppCompatActivity {
                     mProgressBar.setVisibility(View.INVISIBLE);
                     if (sancionado.getStrikes() != null) {
                         int totalSanciones = sancionado.getStrikes().size();
-                        Log.w("MainActivity", sancionado.getName() + " está sancionado con: "
-                                + totalSanciones + " sanciones");
                         mShareListMap.put(sancionado.getName(), totalSanciones);
                     }
                 }
@@ -303,6 +345,8 @@ public class SancionadoListActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    mSancionadosList.remove(mAdapterPosition);
+                    mSancionadoAdapter.notifyDataSetChanged();
                 }
 
                 @Override

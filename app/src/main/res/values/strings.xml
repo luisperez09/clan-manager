@@ -39,6 +39,7 @@
     <string name="select_action">Seleccione acción</string>
     <string name="no_strikes_message"><xliff:g id="name">%s</xliff:g> aún no tiene strikes</string>
     <string name="edit_sancionado">Modificar sancionado</string>
+    <string name="delete_sancionado">Eliminar sancionado</string>
 
     <string name="action_edit_strike">Editar motivo del strike</string>
     <string name="action_delete_strike">Eliminar strike</string>
