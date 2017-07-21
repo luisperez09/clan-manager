@@ -1,4 +1,4 @@
-package com.example.android.clanmanager;
+package com.example.android.clanmanager.pojo;
 
 
 import android.content.Context;

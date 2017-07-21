@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.android.clanmanager.pojo.Banned;
+
 import java.util.ArrayList;
 
 

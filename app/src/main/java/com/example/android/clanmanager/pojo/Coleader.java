@@ -1,4 +1,4 @@
-package com.example.android.clanmanager;
+package com.example.android.clanmanager.pojo;
 
 
 public class Coleader {

@@ -11,6 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.clanmanager.pojo.Coleader;
+import com.example.android.clanmanager.pojo.Option;
+import com.example.android.clanmanager.pojo.Sancionado;
+import com.example.android.clanmanager.pojo.Strike;
+
 import java.util.ArrayList;
 
 
