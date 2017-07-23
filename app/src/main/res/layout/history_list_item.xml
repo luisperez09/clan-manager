@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/history_text_view"
+    android:layout_width="match_parent"
+    android:layout_height="58dp"
+    android:gravity="center_vertical"
+    android:maxLines="1"
+    android:paddingLeft="16dp"
+    android:textColor="@android:color/black"
+    android:fontFamily="roboto"
+    android:textSize="20sp"
+    tools:text="31 dic, 2999" />
+
