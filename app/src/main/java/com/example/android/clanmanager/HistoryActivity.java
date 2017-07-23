@@ -56,7 +56,6 @@ public class HistoryActivity extends AppCompatActivity {
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     String date = (String) dataSnapshot.getValue();
                     mAdapter.add(date);
-                    mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
