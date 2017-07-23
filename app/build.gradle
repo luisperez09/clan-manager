@@ -35,6 +35,9 @@ dependencies {
     // FirebaseUI
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
 
+    // First letter caps
+    compile 'org.apache.commons:commons-text:1.1'
+
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

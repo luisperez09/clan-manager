@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.text.WordUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -293,7 +295,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     }
 
     private void pushNewSancionado() {
-        Sancionado sancionado = new Sancionado(mSancionadoInput);
+        Sancionado sancionado = new Sancionado(WordUtils.capitalize(mSancionadoInput));
         mSancionadosReference.push().setValue(sancionado);
         Toast.makeText(this, "Nuevo sancionado: " + mSancionadoInput, Toast.LENGTH_SHORT).show();
     }
@@ -301,7 +303,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     private void modifySancionado(Sancionado sancionado) {
         DatabaseReference sancionadoReference = mSancionadosReference.child(sancionado.getKey());
         Map<String, Object> childUpdate = new HashMap<>();
-        sancionado.setName(mSancionadoInput);
+        sancionado.setName(WordUtils.capitalize(mSancionadoInput));
         childUpdate.put("name", sancionado.getName());
         sancionadoReference.updateChildren(childUpdate);
         Toast.makeText(this, "Se modificó el sancionado", Toast.LENGTH_SHORT).show();
@@ -387,7 +389,7 @@ public class SancionadoListActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
                 }
             };
-            mSancionadosReference.addChildEventListener(mChildEventListener);
+            mSancionadosReference.orderByChild("name").addChildEventListener(mChildEventListener);
         }
 
         if (mEmptyCheckListener == null) {
