@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class HistoryActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mHistoryReference;
     private ChildEventListener mChildEventListener;
+    private ValueEventListener mEmptyCheckListener;
 
     private ListView mListView;
     private List<String> mDates = new ArrayList<>();
@@ -100,12 +102,34 @@ public class HistoryActivity extends AppCompatActivity {
             };
             mHistoryReference.addChildEventListener(mChildEventListener);
         }
+        if (mEmptyCheckListener == null) {
+            mEmptyCheckListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        mProgressBar.setVisibility(View.GONE);
+                        View emptyView = findViewById(R.id.history_empty_view);
+                        emptyView.setVisibility(View.VISIBLE);
+                        mListView.setEmptyView(emptyView);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mHistoryReference.addValueEventListener(mEmptyCheckListener);
+        }
     }
 
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mHistoryReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
+        }
+        if (mEmptyCheckListener != null) {
+            mHistoryReference.removeEventListener(mEmptyCheckListener);
+            mEmptyCheckListener = null;
         }
     }
 }

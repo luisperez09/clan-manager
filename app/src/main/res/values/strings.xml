@@ -46,4 +46,5 @@
 
     <string name="action_edit_strike">Editar motivo del strike</string>
     <string name="action_delete_strike">Eliminar strike</string>
+    <string name="no_seasons_registered">Ho hay temporadas registradas</string>
 </resources>
