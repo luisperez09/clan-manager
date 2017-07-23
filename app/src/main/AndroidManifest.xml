@@ -55,6 +55,9 @@
             android:name=".HistoryActivity"
             android:label="@string/history_label"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SeasonHistoryActivity"
+            android:parentActivityName=".HistoryActivity" />
     </application>
 
 </manifest>

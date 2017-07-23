@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.android.clanmanager.SeasonHistoryActivity">
 
     <ListView
-        android:id="@+id/history_list_view"
+        android:id="@+id/season_history_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ProgressBar
-        android:id="@+id/history_progress_bar"
+        android:id="@+id/season_history_progress_bar"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerInParent="true" />
+
 </RelativeLayout>

@@ -1,16 +1,13 @@
 package com.example.android.clanmanager;
 
-import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.example.android.clanmanager.pojo.Sancionado;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,43 +15,42 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class HistoryActivity extends AppCompatActivity {
+public class SeasonHistoryActivity extends AppCompatActivity {
+
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mHistoryReference;
+    private DatabaseReference mSeasonReference;
     private ChildEventListener mChildEventListener;
 
     private ListView mListView;
-    private List<String> mDates = new ArrayList<>();
-    private ArrayAdapter<String> mAdapter;
+    private TwoLineAdapter mSeasonAdapter;
+    private ArrayList<Object> mSancionadosList;
     private ProgressBar mProgressBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_season_history);
+
+        String key = "";
+        if (getIntent().hasExtra("dateKey")) {
+            key = getIntent().getStringExtra("dateKey");
+            setTitle(key);
+        } else {
+            Toast.makeText(this, "Temporada inválida", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mHistoryReference = mFirebaseDatabase.getReference().child("history_index");
+        mSeasonReference = mFirebaseDatabase.getReference().child("history").child(key);
 
-        mListView = (ListView) findViewById(R.id.history_list_view);
-        mAdapter = new ArrayAdapter<String>(this, R.layout.history_list_item, mDates);
-        mListView.setAdapter(mAdapter);
+        mListView = (ListView) findViewById(R.id.season_history_list);
+        mSancionadosList = new ArrayList<>();
+        mSeasonAdapter = new TwoLineAdapter(this, mSancionadosList);
+        mListView.setAdapter(mSeasonAdapter);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String dateKey = (String) mListView.getItemAtPosition(position);
-                Intent i = new Intent(HistoryActivity.this, SeasonHistoryActivity.class);
-                i.putExtra("dateKey", dateKey);
-                startActivity(i);
-            }
-        });
+        mProgressBar = (ProgressBar) findViewById(R.id.season_history_progress_bar);
 
-        mProgressBar = (ProgressBar) findViewById(R.id.history_progress_bar);
-        
     }
 
     @Override
@@ -67,7 +63,7 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mAdapter.clear();
+        mSeasonAdapter.clear();
         detachDatabaseListener();
     }
 
@@ -76,9 +72,10 @@ public class HistoryActivity extends AppCompatActivity {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    String date = (String) dataSnapshot.getValue();
-                    mAdapter.add(date);
+                    Sancionado sancionado = dataSnapshot.getValue(Sancionado.class);
+                    mSeasonAdapter.add(sancionado);
                     mProgressBar.setVisibility(View.GONE);
+
                 }
 
                 @Override
@@ -97,13 +94,13 @@ public class HistoryActivity extends AppCompatActivity {
                 public void onCancelled(DatabaseError databaseError) {
                 }
             };
-            mHistoryReference.addChildEventListener(mChildEventListener);
+            mSeasonReference.addChildEventListener(mChildEventListener);
         }
     }
 
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
-            mHistoryReference.removeEventListener(mChildEventListener);
+            mSeasonReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
