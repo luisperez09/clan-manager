@@ -144,7 +144,11 @@ public class SancionadoListActivity extends AppCompatActivity {
                 shareList();
                 break;
             case R.id.action_archive:
-                archiveList();
+                if (mSancionadosList.size() > 0) {
+                    showArchiveAlert();
+                } else {
+                    Toast.makeText(this, "No hay sancionados", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -282,6 +286,28 @@ public class SancionadoListActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void showArchiveAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Archivar temporada")
+                .setMessage("Advertencia: esta acción cierra la temporada actual y elimina todas las " +
+                        "sanciones vigentes. ¿Está seguro?")
+                .setPositiveButton("Archivar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        archiveList();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+        builder.show();
+    }
+
 
     @Override
     protected void onStart() {
@@ -353,8 +379,8 @@ public class SancionadoListActivity extends AppCompatActivity {
             }
             seasonRef.setValue(seasonMap);
             seasonIndex.setValue(readableDate);
-        } else {
-            Toast.makeText(this, "No hay sancionados", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Se ha archivado la temporada", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
