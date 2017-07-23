@@ -54,7 +54,8 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         mProgressBar = (ProgressBar) findViewById(R.id.history_progress_bar);
-        
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
     }
 
     @Override

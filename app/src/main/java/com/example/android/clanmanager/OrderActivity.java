@@ -1,8 +1,10 @@
 package com.example.android.clanmanager;
 
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -57,6 +59,8 @@ public class OrderActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.coleaders_list);
         mListView.setAdapter(mTwoLineAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.coleaders_pb);
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_coleader_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

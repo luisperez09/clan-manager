@@ -2,8 +2,10 @@ package com.example.android.clanmanager;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -69,6 +71,8 @@ public class SancionadoListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.sancionados_list);
         mListView.setAdapter(mSancionadoAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.sancionado_progress_bar);
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

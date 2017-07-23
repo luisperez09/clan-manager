@@ -1,8 +1,10 @@
 package com.example.android.clanmanager;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
@@ -45,7 +47,8 @@ public class BlacklistActivity extends AppCompatActivity {
         mBannedAdapter = new BannedAdapter(this, banneds);
         mlistView.setAdapter(mBannedAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.blacklist_progress_bar);
-
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
         mAddBannedFab = (FloatingActionButton) findViewById(R.id.fab);
         mAddBannedFab.setOnClickListener(new View.OnClickListener() {
             @Override

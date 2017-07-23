@@ -1,6 +1,8 @@
 package com.example.android.clanmanager;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
@@ -50,7 +52,8 @@ public class SeasonHistoryActivity extends AppCompatActivity {
         mListView.setAdapter(mSeasonAdapter);
 
         mProgressBar = (ProgressBar) findViewById(R.id.season_history_progress_bar);
-
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
     }
 
     @Override

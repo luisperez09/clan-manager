@@ -1,8 +1,10 @@
 package com.example.android.clanmanager;
 
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -68,6 +70,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
         mListView.setAdapter(mStrikeAdapter);
         registerForContextMenu(mListView);
         mProgressBar = (ProgressBar) findViewById(R.id.pb_sanciones_editor);
+        mProgressBar.getIndeterminateDrawable()
+                .setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), PorterDuff.Mode.MULTIPLY);
 
         mSancionadoTextView = (TextView) findViewById(R.id.sancionado_text_view);
         mSancionadoTextView.setText(username);
