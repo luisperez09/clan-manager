@@ -119,13 +119,13 @@ public class SancionadoListActivity extends AppCompatActivity {
                             getString(R.string.no_strikes_message, selectedSancionado.getName()),
                             Toast.LENGTH_SHORT).show();
                 }
-                break;
+                return true;
             case R.id.action_edit_sancionado:
                 showEditAlertDialog(selectedSancionado);
-                break;
+                return true;
             case R.id.action_delete_sancionado:
                 showDeleteAlertDialog(selectedSancionado);
-                break;
+                return true;
         }
 
         return super.onContextItemSelected(item);
@@ -142,14 +142,14 @@ public class SancionadoListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_share:
                 shareList();
-                break;
+                return true;
             case R.id.action_archive:
                 if (mSancionadosList.size() > 0) {
                     showArchiveAlert();
                 } else {
                     Toast.makeText(this, "No hay sancionados", Toast.LENGTH_SHORT).show();
                 }
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

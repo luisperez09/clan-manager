@@ -113,10 +113,10 @@ public class SancionesEditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_edit:
                 showEditAlertDialog(selectedStrike);
-                break;
+                return true;
             case R.id.action_delete:
                 showDeleteDialog(selectedStrike);
-                break;
+                return true;
         }
         return super.onContextItemSelected(item);
     }
