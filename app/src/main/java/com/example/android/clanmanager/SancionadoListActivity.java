@@ -380,8 +380,20 @@ public class SancionadoListActivity extends AppCompatActivity {
             seasonRef.setValue(seasonMap);
             seasonIndex.setValue(readableDate);
             Toast.makeText(this, "Se ha archivado la temporada", Toast.LENGTH_SHORT).show();
-            finish();
+            removeList();
         }
+    }
+
+    private void removeList() {
+        mSancionadosReference.removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError error, DatabaseReference databaseReference) {
+                if (error == null) {
+                    mSancionadoAdapter.clear();
+                    mSancionadoAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
 
@@ -440,7 +452,7 @@ public class SancionadoListActivity extends AppCompatActivity {
 
                 }
             };
-            mSancionadosReference.addListenerForSingleValueEvent(mEmptyCheckListener);
+            mSancionadosReference.addValueEventListener(mEmptyCheckListener);
         }
     }
 
