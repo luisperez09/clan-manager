@@ -28,10 +28,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class SancionesEditorActivity extends AppCompatActivity {
@@ -217,7 +218,8 @@ public class SancionesEditorActivity extends AppCompatActivity {
     }
 
     private void pushNewStrike() {
-        String date = DateFormat.getDateInstance().format(new Date());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+        String date = dateFormat.format(new Date(System.currentTimeMillis()));
         Strike strike = new Strike(date, mStrikeReason);
         mUserStrikesReference.push().setValue(strike);
         Toast.makeText(this, "Se agregó el strike", Toast.LENGTH_SHORT).show();
