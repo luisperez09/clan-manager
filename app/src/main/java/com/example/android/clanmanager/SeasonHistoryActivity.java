@@ -1,10 +1,12 @@
 package com.example.android.clanmanager;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -28,28 +30,40 @@ public class SeasonHistoryActivity extends AppCompatActivity {
     private TwoLineAdapter mSeasonAdapter;
     private ArrayList<Object> mSancionadosList;
     private ProgressBar mProgressBar;
+    private String mSeasonDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_season_history);
 
-        String key = "";
+        mSeasonDate = "";
         if (getIntent().hasExtra("dateKey")) {
-            key = getIntent().getStringExtra("dateKey");
-            setTitle(key);
+            mSeasonDate = getIntent().getStringExtra("dateKey");
+            setTitle(mSeasonDate);
         } else {
             Toast.makeText(this, "Temporada inválida", Toast.LENGTH_SHORT).show();
             finish();
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mSeasonReference = mFirebaseDatabase.getReference().child("history").child(key);
+        mSeasonReference = mFirebaseDatabase.getReference().child("history").child(mSeasonDate);
 
         mListView = (ListView) findViewById(R.id.season_history_list);
         mSancionadosList = new ArrayList<>();
         mSeasonAdapter = new TwoLineAdapter(this, mSancionadosList);
         mListView.setAdapter(mSeasonAdapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Sancionado clickedSancionado = (Sancionado) mSeasonAdapter.getItem(position);
+                Intent intent = new Intent(SeasonHistoryActivity.this, HistoryDetailActivity.class);
+                intent.putExtra("name", clickedSancionado.getName())
+                        .putExtra("seasonDate", mSeasonDate);
+                startActivity(intent);
+            }
+        });
 
         mProgressBar = (ProgressBar) findViewById(R.id.season_history_progress_bar);
         mProgressBar.getIndeterminateDrawable()

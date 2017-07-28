@@ -57,7 +57,11 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SeasonHistoryActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".HistoryActivity" />
+        <activity
+            android:name=".HistoryDetailActivity"
+            android:parentActivityName=".SeasonHistoryActivity" />
     </application>
 
 </manifest>
