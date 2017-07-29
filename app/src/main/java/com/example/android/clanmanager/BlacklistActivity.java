@@ -20,16 +20,32 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Muestra lista de los miembros baneados del clan
+ */
 public class BlacklistActivity extends AppCompatActivity {
 
     private FloatingActionButton mAddBannedFab;
 
     // Firebase instance variables
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo de los baneados
+     */
     private DatabaseReference mBannedDatabaseReference;
+    /**
+     * Listener de los nodos hijos de la referencia de los baneados
+     */
     private ChildEventListener mChildEventListener;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de los baneados
+     */
     private ValueEventListener mEmptyCheckListener;
 
+    // Objetos para manejo de la UI
     private ListView mlistView;
     private BannedAdapter mBannedAdapter;
     private ProgressBar mProgressBar;
@@ -61,6 +77,7 @@ public class BlacklistActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra ProgressBar y adjunta Listeners de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -68,10 +85,24 @@ public class BlacklistActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia el ListView y retira los Listeners de la base de datos
         mBannedAdapter.clear();
         dettachDatabaseListener();
     }
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * de los baneados.
+     * <p>
+     * {@link #mChildEventListener} agrega cada baneado a la lista y oculta el ProgressBar
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia de los baneados,
+     * oculta el ProgressBar y muestra el EmptyView en caso de no recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mBannedDatabaseReference}
+     *
+     * @see #dettachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -121,6 +152,11 @@ public class BlacklistActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void dettachDatabaseListener() {
         if (mChildEventListener != null) {
             mBannedDatabaseReference.removeEventListener(mChildEventListener);

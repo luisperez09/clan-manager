@@ -30,21 +30,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Muestra lista de colíderes en el orden de responsabilidad de las guerras y resalta al
+ * responsable actual. Permite delegar responsabilidad entre colíderes
+ */
 public class OrderActivity extends AppCompatActivity {
 
     private final static int EDITTEXT_INPUT_LIMIT = 40;
 
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo del {@link Coleader Colíder}
+     */
     private DatabaseReference mColeadersReference;
+    /**
+     * Listener de los nodos hijos de la referencia del {@link Coleader Colíder}
+     */
     private ChildEventListener mChildEventListener;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de {@link Coleader Colíder}
+     */
     private ValueEventListener mEmptyCheckListener;
-
+    /**
+     * Key del {@link Coleader colíder} encargado de lanzar la guerra
+     */
+    private String mCurrentResponsible;
+    /**
+     * Posición del {@link Coleader colíder} responsable dentro del adapter
+     */
+    private int mCurrentResponsiblePosition;
+    // Objetos para el manejo de la UI
     private ProgressBar mProgressBar;
     private ListView mListView;
     private ArrayList<Object> mData;
     private TwoLineAdapter mTwoLineAdapter;
-    private String mCurrentResponsible;
-    private int mCurrentResponsiblePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +104,7 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra ProgressBar y adjunta los Listeners a la referencia de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListeners();
     }
@@ -89,10 +112,17 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia la lista y retira los Listeners de la referencia de la base de datos
         mTwoLineAdapter.clear();
         detachDatabaseListeners();
     }
 
+    /**
+     * Muestra ventana de alerta que recibe el nombre del {@link Coleader colíder} para posteriormente
+     * agregarlo a la base de datos
+     *
+     * @see #addNewColeader(String)
+     */
     private void showAddColeaderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
@@ -128,6 +158,13 @@ public class OrderActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra ventana de alerta para confirmación de delagación de responsabilidad
+     *
+     * @param key      key del nuevo responsable en la base de datos
+     * @param position posición del nuevo responsable en el adapter
+     * @see #delegateResponsibility(String, int)
+     */
     private void showAlertDialog(final String key, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("¿Delegar responsabilidad?")
@@ -147,7 +184,20 @@ public class OrderActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Delega la responsabilidad de la guerra a otro {@link Coleader colider}.
+     * <p>
+     * Se actualiza en la base de datos el nuevo responsable según el key recibido y el anterior
+     * según el key almacenado en {@link #mCurrentResponsible}
+     * <p>
+     * Se actualiza el adapter para ajustar el <code>selector</code> según el nuevo responsable
+     *
+     * @param position la posición del nuevo responsable en el adapter
+     * @param key      key del nuevo responsable en la base de datos
+     * @see #showAlertDialog(String, int)
+     */
     private void delegateResponsibility(String key, int position) {
+        /////////// Queries a la base de datos ///////////
         Map<String, Object> noLongerResponsible = new HashMap<>();
         noLongerResponsible.put("responsible", false);
         mColeadersReference.child(mCurrentResponsible).updateChildren(noLongerResponsible);
@@ -156,6 +206,7 @@ public class OrderActivity extends AppCompatActivity {
         newResponsible.put("responsible", true);
         mColeadersReference.child(key).updateChildren(newResponsible);
 
+        ////////// Actualización del adapter y la UI ////////////
         mCurrentResponsible = key;
 
         Coleader previous = (Coleader) mData.get(mCurrentResponsiblePosition);
@@ -166,16 +217,39 @@ public class OrderActivity extends AppCompatActivity {
         current.setResponsible(true);
         mData.set(position, current);
 
+        // Responsable adopta nueva posición en el adapter
         mCurrentResponsiblePosition = position;
         mTwoLineAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Agrega nuevo {@link Coleader colíder} a la base de datos, con el nombre recibido de la
+     * ventana de alerta
+     *
+     * @param coleaderName nombre del nuevo colíder
+     */
     private void addNewColeader(String coleaderName) {
         Coleader coleader = new Coleader(coleaderName, false);
         mColeadersReference.push().setValue(coleader);
         Toast.makeText(this, "Se agregó el colíder", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * del {@link Coleader Colíder}
+     * <p>
+     * {@link #mChildEventListener}: agrega el colíder a la lista y oculta el
+     * ProgressBar cuando detecta una entrada nueva en la base de datos. Asigna el
+     * {@link #mCurrentResponsible key} y la {@link #mCurrentResponsiblePosition posición} del
+     * responsable detectado en la base de datos
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia del colíder en la
+     * base de datos, oculta el ProgressBar y muestra el EmptyView en caso de no recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mColeadersReference}
+     *
+     * @see #detachDatabaseListeners()
+     */
     private void attachDatabaseListeners() {
         if (mEmptyCheckListener == null) {
             mEmptyCheckListener = new ValueEventListener() {
@@ -237,6 +311,11 @@ public class OrderActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListeners()
+     */
     public void detachDatabaseListeners() {
         if (mChildEventListener != null) {
             mColeadersReference.removeEventListener(mChildEventListener);

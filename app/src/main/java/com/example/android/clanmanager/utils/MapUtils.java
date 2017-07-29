@@ -1,6 +1,8 @@
 package com.example.android.clanmanager.utils;
 
 
+import com.example.android.clanmanager.SancionadoListActivity;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -8,8 +10,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase que contiene método de organización de {@link Map mapa}
+ */
 public class MapUtils {
 
+    /**
+     * Ordena el {@link Map mapa} recibido según el valor de cada una de las
+     * {@link java.util.Map.Entry entradas} de mayor a menor
+     *
+     * @param map Mapa a ser ordenado
+     * @return Mapa ordenado según valor de mayor a menor
+     * @see SancionadoListActivity#shareList()
+     */
     public static <K, V extends Comparable<? super V>> Map<K, V>
     sortByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list =

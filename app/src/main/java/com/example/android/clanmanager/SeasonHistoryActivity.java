@@ -20,17 +20,36 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+/**
+ * Muestra lista de sancionados y sus strikes según la temporada seleccionada en el index del
+ * historial. Permite navegación hacia {@link HistoryDetailActivity} para ver los detalles de los strikes
+ */
 public class SeasonHistoryActivity extends AppCompatActivity {
 
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo de la temporada seleccionada en el historial
+     */
     private DatabaseReference mSeasonReference;
+    /**
+     * Listener de los nodos hijos de la referencia de la temporada seleccionada
+     */
     private ChildEventListener mChildEventListener;
+    /**
+     * Fecha de cierre de la temporada seleccionada. Variable de referencia para utilizar como key
+     * para ver los detalles de los strikes del sancionado seleccionado, así como también usarla
+     * como título de la actividad
+     */
+    private String mSeasonDate;
 
+    // Objetos para el manejo de la UI
     private ListView mListView;
     private TwoLineAdapter mSeasonAdapter;
     private ArrayList<Object> mSancionadosList;
     private ProgressBar mProgressBar;
-    private String mSeasonDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +92,7 @@ public class SeasonHistoryActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra ProgressBar y adjunta Listeners a la referencia de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -80,10 +100,22 @@ public class SeasonHistoryActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia la lista y retira Listeners de la referencia de la base de datos
         mSeasonAdapter.clear();
         detachDatabaseListener();
     }
 
+    /**
+     * Crea el Listener de la base de datos en caso de no existir y lo adjunta a la referencia
+     * de la temporada
+     * <p>
+     * {@link #mChildEventListener}: agrega el sancionado a la lista y oculta el
+     * ProgressBar cuando detecta una entrada nueva en la base de datos.
+     * <p>
+     * El Listener es adjuntado a la referencia {@link #mSeasonReference}
+     *
+     * @see #detachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -115,6 +147,11 @@ public class SeasonHistoryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira el Listener de la base de datos en caso de existir y lo setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mSeasonReference.removeEventListener(mChildEventListener);

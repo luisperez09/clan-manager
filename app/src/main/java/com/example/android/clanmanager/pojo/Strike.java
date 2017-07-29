@@ -1,15 +1,27 @@
 package com.example.android.clanmanager.pojo;
 
+/**
+ * Gestiona Strikes adjudicados al Sancionado
+ */
 public class Strike {
     private String date;
     private String reason;
     private String key;
 
+    /**
+     * Crea nuevo Strike, tomando la fecha actual al momento de instanciar el objeto
+     *
+     * @param date   Fecha actual al momento de la creación del objeto
+     * @param reason Motivo del Strike
+     */
     public Strike(String date, String reason) {
         this.date = date;
         this.reason = reason;
     }
 
+    /**
+     * Constructor vacío para la base de datos de Firebase
+     */
     public Strike() {
 
     }

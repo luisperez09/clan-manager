@@ -19,7 +19,17 @@ import com.example.android.clanmanager.pojo.Strike;
 import java.util.ArrayList;
 
 
+/**
+ * Adapter genérico para ListItemView de dos líneas. Recibe {@link ArrayList} de objetos genéricos
+ * y rellena los items de la lista según el tipo de objeto específico de la lista.
+ */
 public class TwoLineAdapter extends ArrayAdapter<Object> {
+    /**
+     * Crea un adapter genérico para ítems de dos líneas
+     *
+     * @param context el contexto de la aplicación
+     * @param data    la lista de objetos
+     */
     public TwoLineAdapter(Context context, ArrayList<Object> data) {
         super(context, 0, data);
     }
@@ -32,6 +42,7 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
             listItemView =
                     LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
+        // Ejecuta control de flujo de acuerdo al tipo de objeto
         Object o = getItem(position);
         if (o instanceof Coleader) {
             listItemView = setupColeaderView(listItemView, position);
@@ -46,6 +57,12 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         return listItemView;
     }
 
+    /**
+     * Rellena los views de los colíderes y resalta el ítem del colíder responsable de la guerra
+     *
+     * @param lv       el item view a rellenar
+     * @param position la posición del {@link Coleader Colider} dentro del adapter
+     */
     private View setupColeaderView(View lv, int position) {
         Coleader coleader = (Coleader) getItem(position);
         TextView mainTextView = (TextView) lv.findViewById(R.id.option_text_view);
@@ -59,6 +76,12 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         return lv;
     }
 
+    /**
+     * Rellena los views de los sancionados, marcando una "X" por cada strike registrado
+     *
+     * @param lv       el item view a rellenar
+     * @param position la posición del {@link Sancionado} dentro del adapter
+     */
     private View setupSancionadosList(View lv, int position) {
         Sancionado currentSancionado = (Sancionado) getItem(position);
         TextView nameTextView = (TextView) lv.findViewById(R.id.option_text_view);
@@ -79,6 +102,12 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         return lv;
     }
 
+    /**
+     * Rellena los views de los strikes, mostrando la fecha y el motivo de los mismos
+     *
+     * @param lv       el item view a rellenar
+     * @param position la posición del {@link Strike} dentro del adapter
+     */
     private View setupStrike(View lv, int position) {
         Strike currentStrike = (Strike) getItem(position);
 
@@ -93,6 +122,13 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         return lv;
     }
 
+    /**
+     * Rellena los views de las opciones del menú principal, mostrando una breve descripción de
+     * cada una
+     *
+     * @param lv       el item view a rellenar
+     * @param position la posición de la {@link Option Opción} dentro del adapter
+     */
     private View setupOption(View lv, int position) {
         Option currentOption = (Option) getItem(position);
         TextView descriptionTextView = (TextView) lv.findViewById(R.id.option_text_view);

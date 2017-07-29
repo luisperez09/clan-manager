@@ -19,13 +19,31 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Muestra detalles de los strikes del historial del sancionado seleccionado
+ */
 public class HistoryDetailActivity extends AppCompatActivity {
 
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo del detalle del {@link Strike} dentro del
+     * historial
+     */
     private DatabaseReference mDetailReference;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de {@link Strike} dentro del
+     * historial
+     */
     private ValueEventListener mEmptyCheckListener;
+    /**
+     * Listener de los nodos hijos de la referencia del {@link Strike}
+     */
     private ChildEventListener mChildEventListener;
 
+    // Objetos para manejo de la UI
     private ProgressBar mProgressBar;
     private ListView mListView;
     private ArrayList<Object> mStrikeList;
@@ -67,6 +85,7 @@ public class HistoryDetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra ProgressBar y adjunta Listeners a la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -74,10 +93,26 @@ public class HistoryDetailActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia la lista y retira los Listeners de la base de datos
         mStrikeAdapter.clear();
         detachDatabaseListener();
     }
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * del detalle del {@link Strike}.
+     * <p>
+     * {@link #mChildEventListener} agrega el {@link Strike} a la lista y oculta el
+     * ProgressBar
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia del detalle del
+     * {@link Strike} en el historial, oculta el ProgressBar y muestra el EmptyView en caso de no
+     * recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mDetailReference}
+     *
+     * @see #detachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -128,6 +163,11 @@ public class HistoryDetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mDetailReference.removeEventListener(mChildEventListener);

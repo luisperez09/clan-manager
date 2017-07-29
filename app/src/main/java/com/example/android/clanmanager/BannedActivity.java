@@ -11,6 +11,9 @@ import com.example.android.clanmanager.pojo.Banned;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Banea miembros del clan y registra el motivo
+ */
 public class BannedActivity extends AppCompatActivity {
 
     private EditText mBannedEditText;
@@ -18,7 +21,13 @@ public class BannedActivity extends AppCompatActivity {
     private FloatingActionButton mSubmitBanButton;
 
     // Firebase instance variables
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo del index de los baneados
+     */
     DatabaseReference mBannedDatabaseReference;
 
     @Override
@@ -55,7 +64,8 @@ public class BannedActivity extends AppCompatActivity {
      * Helper method que valida datos a insertar a la DB
      *
      * @param banned objeto a validar
-     * @return true si todos los campos están poblados, false si al menos uno está en blanco
+     * @return <code>true</code> si todos los campos están poblados, <code>false</code> si al menos
+     * uno está en blanco
      */
     private boolean isValidBan(Banned banned) {
         String bannedName = banned.getBanned().trim();

@@ -26,6 +26,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Menú principal de la app. Muestra opciones de navegación hacia las diferentes actividades
+ * de la app. Requiere inicio de sesión mediante proveedor de Google para poder hacer uso de sus
+ * funciones
+ */
 public class MainActivity extends AppCompatActivity {
 
     /**
@@ -44,10 +49,22 @@ public class MainActivity extends AppCompatActivity {
      * Nombre de usuario proveniente del proveedor (Gmail)
      */
     private String mUsername;
+    /**
+     * Tag para hacer logging
+     */
     public static final String TAG = MainActivity.class.getSimpleName();
     // Firebase instance variables
+    /**
+     * Instancia de autenticación
+     */
     private FirebaseAuth mFirebaseAuth;
+    /**
+     * Listener para manejo de cambios de estado de autenticación
+     */
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    /**
+     * Instancia de configuración remota
+     */
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
+            // Resultado del inicio de sesión
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, R.string.logged_in, Toast.LENGTH_SHORT).show();
             }
@@ -133,12 +151,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Adjunta Listener de autenticación
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        // Retira Listener de autenticación
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
@@ -164,12 +184,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Ejecuta cierre de sesión del usuario
+     */
     private void signOut() {
         AuthUI.getInstance().signOut(this);
         Toast.makeText(this, "Sesión cerrada.\nGracias por usar "
                 + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Trae información de configuración remota del servidor y ejecuta comparación de los datos
+     * locales y los remotos
+     *
+     * @see #compareAppVersion()
+     */
     private void fetchConfig() {
         long cacheExpiration = 3600; // 1 hora
         if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
@@ -192,6 +221,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Compara versión actual de la app con la versión más reciente detectada en el servidor
+     *
+     * @see #fetchConfig()
+     */
     private void compareAppVersion() {
         Long app_version = mFirebaseRemoteConfig.getLong(APP_VERSION_KEY);
         int fetchedAppVersion = app_version.intValue();

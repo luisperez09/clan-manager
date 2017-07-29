@@ -21,12 +21,29 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Muestra index de fechas de cierres de temporadas
+ */
 public class HistoryActivity extends AppCompatActivity {
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo del index de las temporadas
+     */
     private DatabaseReference mHistoryReference;
+    /**
+     * Listener de los nodos hijos de la referencia de los índices de las temporadas
+     */
     private ChildEventListener mChildEventListener;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de los índices de las
+     * temporadas
+     */
     private ValueEventListener mEmptyCheckListener;
 
+    // Objetos para manejo de la UI
     private ListView mListView;
     private List<String> mDates = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
@@ -63,6 +80,7 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra ProgressBar y adjunta Listeners de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -70,10 +88,25 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia el ListView y retira los Listeners de la base de datos
         mAdapter.clear();
         detachDatabaseListener();
     }
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * de los índices de las temporadas.
+     * <p>
+     * {@link #mChildEventListener} agrega la fecha de la temporada a la lista y oculta el
+     * ProgressBar
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia de los índices de
+     * las temporadas, oculta el ProgressBar y muestra el EmptyView en caso de no recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mHistoryReference}
+     *
+     * @see #detachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -122,6 +155,11 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mHistoryReference.removeEventListener(mChildEventListener);

@@ -35,21 +35,49 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Permite agregar, modificar y editar {@link Strike strikes} del
+ * {@link com.example.android.clanmanager.pojo.Sancionado sancionado} seleccionado en la
+ * {@link SancionadoListActivity lista}.
+ */
 public class SancionesEditorActivity extends AppCompatActivity {
 
+    /**
+     * Límite de caracteres para los motivos de las sanciones
+     */
     private final static int EDITTEXT_INPUT_LIMIT = 40;
+    /**
+     * Instancia de la base de datos de Firebase
+     */
+    private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo de {@link Strike} del
+     * {@link com.example.android.clanmanager.pojo.Sancionado Sancionado} seleccionado
+     */
+    private DatabaseReference mUserStrikesReference;
+    /**
+     * Listener de los nodos hijos de la referencia del {@link Strike}
+     */
+    private ChildEventListener mChildEventListener;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de {@link Strike}
+     */
+    private ValueEventListener mEmptyCheckListener;
+    /**
+     * Motivo del {@link Strike} a ser creado o editado
+     */
+    private String mStrikeReason;
+    /**
+     * Posición del {@link Strike} en el adapter. Variable de referencia para remover el item de
+     * la lista cuando es eliminado de la base de datos
+     */
+    private int mAdapterPosition;
 
     private TextView mSancionadoTextView;
     private ProgressBar mProgressBar;
     private ListView mListView;
     private TwoLineAdapter mStrikeAdapter;
     private ArrayList<Object> mStrikesList;
-    private int mAdapterPosition;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUserStrikesReference;
-    private ChildEventListener mChildEventListener;
-    private ValueEventListener mEmptyCheckListener;
-    private String mStrikeReason;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +116,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Muestra ProgressBar y adjunta los Listeners a la referencia de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -95,6 +124,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia la lista y retira los Listeners de la referencia de la base de datos
         mStrikeAdapter.clear();
         detachDatabaseListener();
     }
@@ -106,6 +136,16 @@ public class SancionesEditorActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_editor_contextual, menu);
     }
 
+    /**
+     * Ejecuta acciones de menú contextual de cada {@link Strike} en la lista.
+     * <p>
+     * Modifica el motivo del strike seleccionado.
+     * <p>
+     * Elimina el strike seleccionado
+     *
+     * @see #showEditAlertDialog(Strike)
+     * @see #showDeleteDialog(Strike)
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -122,6 +162,12 @@ public class SancionesEditorActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+    /**
+     * Muestra ventana de alerta que recibe el motivo del {@link Strike} para posteriormente
+     * ser agregado a la base de datos
+     *
+     * @see #pushNewStrike()
+     */
     private void showAddAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
@@ -158,6 +204,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra ventana de alerta que recibe el nuevo motivo del {@link Strike}, para
+     * posteriormente ser modificado en la base de datos
+     *
+     * @param strike el strike que va a ser modificado
+     * @see #updateStrike(Strike)
+     */
     private void showEditAlertDialog(final Strike strike) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
@@ -196,6 +249,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra ventana de alerta para confirmar la eliminación del {@link Strike} seleccionado
+     * de la base de datos
+     *
+     * @param strike el strike que va a ser eliminado
+     * @see #deleteStrike(Strike)
+     */
     private void showDeleteDialog(final Strike strike) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("¿Eliminar este strike?")
@@ -217,7 +277,14 @@ public class SancionesEditorActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Agrega nuevo {@link Strike} a la base de datos, tomando el motivo introducido en la
+     * ventana de alerta
+     *
+     * @see #showAddAlertDialog()
+     */
     private void pushNewStrike() {
+        // Formato de fecha estándar para todos los dispositivos
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
         String date = dateFormat.format(new Date(System.currentTimeMillis()));
         Strike strike = new Strike(date, mStrikeReason);
@@ -225,6 +292,13 @@ public class SancionesEditorActivity extends AppCompatActivity {
         Toast.makeText(this, "Se agregó el strike", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Modifica un {@link Strike} existente en la base de datos, colocándole el motivo
+     * introducido en la ventana de alerta
+     *
+     * @param strike el strike que va a ser modificado
+     * @see #showEditAlertDialog(Strike)
+     */
     private void updateStrike(Strike strike) {
         DatabaseReference strikeReference = mUserStrikesReference.child(strike.getKey());
         Map<String, Object> childUpdate = new HashMap<>();
@@ -234,12 +308,33 @@ public class SancionesEditorActivity extends AppCompatActivity {
         Toast.makeText(this, "Se actualizó el strike", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Elimina un {@link Strike} existente en la base de datos
+     *
+     * @param strike el strike a ser eliminado de la base de datos
+     * @see #showDeleteDialog(Strike)
+     */
     private void deleteStrike(Strike strike) {
         DatabaseReference strikeReference = mUserStrikesReference.child(strike.getKey());
         strikeReference.removeValue();
         Toast.makeText(this, "Se eliminó el strike", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * del {@link Strike}
+     * <p>
+     * {@link #mChildEventListener}: agrega el strike a la lista y oculta el
+     * ProgressBar cuando detecta una entrada nueva en la base de datos. Elimina el strike de la
+     * lista cuando detecta que fue eliminado de la base de datos.
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia del strike en la
+     * base de datos, oculta el ProgressBar y muestra el EmptyView en caso de no recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mUserStrikesReference}
+     *
+     * @see #detachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -293,6 +388,11 @@ public class SancionesEditorActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void detachDatabaseListener() {
         if (mChildEventListener != null) {
             mUserStrikesReference.removeEventListener(mChildEventListener);

@@ -39,22 +39,64 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Actividad que gestiona lista de los sancionados de la temporada actual. Ejecuta las siguientes
+ * funciones:
+ * <p>
+ * - Agregar, modificar y eliminar sancionados de la base de datos.
+ * <p>
+ * - Mostrar gráficamente la cantidad de strikes asignados a cada sancionado.
+ * <p>
+ * - Crear navegación hacia el {@link SancionesEditorActivity editor}, en el cual se gestionan los
+ * strikes.
+ * <p>
+ * - Compartir los detalles de los strikes de un sancionado en específico, así como también
+ * compartir una lista con la cantidad de strikes de todos los sancionados en el clan.
+ * <p>
+ * - Hacer cierre de temporadas y archivar todas las sanciones en el {@link SeasonHistoryActivity
+ * historial} para futuras auditorías.
+ */
 public class SancionadoListActivity extends AppCompatActivity {
 
+    /**
+     * Etiqueta para funciones de logging
+     */
     public static final String TAG = SancionadoListActivity.class.getSimpleName();
 
+    /**
+     * Instancia de la base de datos de Firebase
+     */
     private FirebaseDatabase mFirebaseDatabase;
+    /**
+     * Referencia de la base de datos que apunta al nodo del {@link Sancionado} en la temporada
+     * actual
+     */
     private DatabaseReference mSancionadosReference;
+    /**
+     * Listener de los nodos hijos de la referencia del {@link Sancionado}
+     */
     private ChildEventListener mChildEventListener;
+    /**
+     * Listener para chequeo de existencia de datos en la referencia de {@link Sancionado}
+     */
+    private ValueEventListener mEmptyCheckListener;
+    /**
+     * Posición del {@link Sancionado} en el adapter. Variable de referencia para remover el item de
+     * la lista cuando es eliminado de la base de datos
+     */
+    private int mAdapterPosition;
+    /**
+     * Mapa utilizado para compartir la lista de cantidades de sanciones cometidas.
+     * Contiene El nombre del {@link Sancionado} que apunta a la cantidad de strikes
+     */
+    private Map<String, Integer> mShareListMap;
+
+    // Objetos para el manejo de la UI
     private TwoLineAdapter mSancionadoAdapter;
     private ArrayList<Object> mSancionadosList;
-    private int mAdapterPosition;
-    private ValueEventListener mEmptyCheckListener;
-
     private String mSancionadoInput;
     private ProgressBar mProgressBar;
     private ListView mListView;
-    private Map<String, Integer> mShareListMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +127,7 @@ public class SancionadoListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        // Registra el ListView para responder con menú contextual
         registerForContextMenu(mListView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_sancionado_button);
@@ -103,6 +145,19 @@ public class SancionadoListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_sancionados_contextual, menu);
     }
 
+    /**
+     * Ejecuta acciones de menú contextual de cada {@link Sancionado} en la lista.
+     * <p>
+     * Comparte strikes del sancionado seleccionado en caso de poseerlos.
+     * <p>
+     * Modifica Nombre del sancionado seleccionado
+     * <p>
+     * Elimina el sancionado seleccionado, al igual que todos sus strikes
+     *
+     * @see #getShareIntentForSancionado(Sancionado)
+     * @see #showEditAlertDialog(Sancionado)
+     * @see #showDeleteAlertDialog(Sancionado)
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -137,6 +192,16 @@ public class SancionadoListActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Ejecuta acciones del menú principal del ActionBar
+     * <p>
+     * Comparte lista de strikes con las diferentes cantidades de cada sancionado
+     * <p>
+     * Archiva la temporada y vacía la lista de sancionados para dar inicio a una nueva temporada
+     *
+     * @see #shareList()
+     * @see #archiveList()
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -154,6 +219,12 @@ public class SancionadoListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Ordena {@link #mShareListMap} por cantidad de strikes, crea lista en modo texto y la comparte
+     * mediante un {@link Intent#createChooser(Intent, CharSequence) chooser}.
+     * <p>
+     * Muestra {@link Toast} en caso de no existir ningún {@link Strike}
+     */
     private void shareList() {
         if (mShareListMap.size() > 0) {
             Map<String, Integer> sortedMap = MapUtils.sortByValue(mShareListMap);
@@ -177,6 +248,13 @@ public class SancionadoListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Genera Intent con fechas y motivos de los strikes del {@link Sancionado} seleccionado para
+     * posteriormente ser compartido mediante texto
+     *
+     * @param sancionado El sancionado cuyos strikes van a ser compartidos
+     * @return El Intent configurado con el texto a compartir
+     */
     private Intent getShareIntentForSancionado(Sancionado sancionado) {
         String shareMsg = getString(R.string.users_strikes) + " *" + sancionado.getName() + "*:\n";
 
@@ -192,6 +270,12 @@ public class SancionadoListActivity extends AppCompatActivity {
         return shareIntent;
     }
 
+    /**
+     * Muestra ventana de alerta que recibe el nombre del {@link Sancionado} para posteriormente
+     * ser agregado a la base de datos
+     *
+     * @see #pushNewSancionado()
+     */
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sancionar a:");
@@ -228,6 +312,13 @@ public class SancionadoListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra ventana de alerta que recibe el nuevo nombre del {@link Sancionado}, para
+     * posteriormente ser modificado en la base de datos
+     *
+     * @param sancionado el sancionado que va a ser modificado
+     * @see #modifySancionado(Sancionado)
+     */
     private void showEditAlertDialog(final Sancionado sancionado) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Modificar sancionado");
@@ -266,6 +357,13 @@ public class SancionadoListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Muestra ventana de alerta para confirmar la eliminación del {@link Sancionado} seleccionado
+     * de la base de datos
+     *
+     * @param deleted el sancionado que va a ser eliminado
+     * @see #deleteSancionado(Sancionado)
+     */
     private void showDeleteAlertDialog(final Sancionado deleted) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Eliminar sancionado")
@@ -286,6 +384,11 @@ public class SancionadoListActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Muestra ventana confirmación del cierre de la temporada
+     *
+     * @see #archiveList()
+     */
     private void showArchiveAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Archivar temporada")
@@ -312,6 +415,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Muestra el ProgressBar y adjunta los Listeners a la referencia de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
     }
@@ -320,16 +424,30 @@ public class SancionadoListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // Limpia la lista y retira los Listeners de la referencia de la base de datos
         mSancionadoAdapter.clear();
         dettachDatabaseListener();
     }
 
+    /**
+     * Agrega nuevo {@link Sancionado} a la base de datos, tomando el nombre introducido en la
+     * ventana de alerta
+     *
+     * @see #showAlertDialog()
+     */
     private void pushNewSancionado() {
         Sancionado sancionado = new Sancionado(WordUtils.capitalize(mSancionadoInput));
         mSancionadosReference.push().setValue(sancionado);
         Toast.makeText(this, "Nuevo sancionado: " + mSancionadoInput, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Modifica un {@link Sancionado} existente en la base de datos, colocándole el nombre
+     * introducido en la ventana de alerta
+     *
+     * @param sancionado el sancionado que va a ser modificado
+     * @see #showEditAlertDialog(Sancionado)
+     */
     private void modifySancionado(Sancionado sancionado) {
         DatabaseReference sancionadoReference = mSancionadosReference.child(sancionado.getKey());
         Map<String, Object> childUpdate = new HashMap<>();
@@ -340,6 +458,12 @@ public class SancionadoListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Elimina un {@link Sancionado} existente en la base de datos, incluyendo todos sus strikes
+     *
+     * @param deleted el sancionado a ser eliminado de la base de datos
+     * @see #showDeleteAlertDialog(Sancionado)
+     */
     private void deleteSancionado(Sancionado deleted) {
         DatabaseReference deletedReference = mSancionadosReference.child(deleted.getKey());
         deletedReference.removeValue(new DatabaseReference.CompletionListener() {
@@ -360,10 +484,23 @@ public class SancionadoListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Archiva la temporada en el historial y vacía la lista de sancionados de la temporada actual
+     * para dar inicio a una nueva temporada
+     * <p>
+     * Para mayor rendimiento al manipular el {@link HistoryActivity historial} de temporadas, se
+     * almacena también un index de fechas de cierre, de manera que el índice del historial consuma
+     * menos ancho de banda. Ese index posteriormente será el Key del nodo de la temporada que se
+     * desee leer.
+     *
+     * @see #showArchiveAlert()
+     * @see #removeList()
+     */
     private void archiveList() {
         int listSize = mSancionadosList.size();
 
         if (listSize > 0) {
+            // Formato de fecha estándar para todos los dispositivos
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
             Date date = new Date(System.currentTimeMillis());
             String readableDate = dateFormat.format(date);
@@ -384,6 +521,12 @@ public class SancionadoListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Elimina todos los sancionados de la temporada actual de la base de datos y retira todos los
+     * ítems de la lista
+     *
+     * @see #archiveList()
+     */
     private void removeList() {
         mSancionadosReference.removeValue(new DatabaseReference.CompletionListener() {
             @Override
@@ -397,6 +540,21 @@ public class SancionadoListActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Crea los Listeners de la base de datos en caso de no existir y los adjunta a la referencia
+     * del {@link Sancionado}
+     * <p>
+     * {@link #mChildEventListener}: agrega el sancionado a la lista y oculta el
+     * ProgressBar cuando detecta una entrada nueva en la base de datos. Elimina el sancionado de la
+     * lista cuando detecta que fue eliminado de la base de datos.
+     * <p>
+     * {@link #mEmptyCheckListener} chequea si existen datos en la referencia del sancionado en la
+     * base de datos, oculta el ProgressBar y muestra el EmptyView en caso de no recibir datos
+     * <p>
+     * Ambos Listeners son adjuntados a la referencia {@link #mSancionadosReference}
+     *
+     * @see #dettachDatabaseListener()
+     */
     private void attachDatabaseListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
@@ -456,6 +614,11 @@ public class SancionadoListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retira los Listeners de la base de datos en caso de existir y los setea a <code>null</code>
+     *
+     * @see #attachDatabaseListener()
+     */
     private void dettachDatabaseListener() {
         if (mChildEventListener != null) {
             mSancionadosReference.removeEventListener(mChildEventListener);
@@ -468,15 +631,3 @@ public class SancionadoListActivity extends AppCompatActivity {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
