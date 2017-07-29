@@ -36,11 +36,11 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
         if (o instanceof Coleader) {
             listItemView = setupColeaderView(listItemView, position);
         } else if (o instanceof Sancionado) {
-            setupSancionadosList(listItemView, position);
+            listItemView = setupSancionadosList(listItemView, position);
         } else if (o instanceof Strike) {
-            setupStrike(listItemView, position);
+            listItemView = setupStrike(listItemView, position);
         } else if (o instanceof Option) {
-            setupOption(listItemView, position);
+            listItemView = setupOption(listItemView, position);
         }
 
         return listItemView;
