@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.clanmanager.pojo.Banned;
 import com.example.android.clanmanager.pojo.Coleader;
 import com.example.android.clanmanager.pojo.Option;
 import com.example.android.clanmanager.pojo.Sancionado;
@@ -52,6 +53,8 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
             listItemView = setupStrike(listItemView, position);
         } else if (o instanceof Option) {
             listItemView = setupOption(listItemView, position);
+        } else if (o instanceof Banned) {
+            listItemView = setupBanned(listItemView, position);
         }
 
         return listItemView;
@@ -136,6 +139,25 @@ public class TwoLineAdapter extends ArrayAdapter<Object> {
 
         TextView summaryTextView = (TextView) lv.findViewById(R.id.summary_text_view);
         summaryTextView.setText(currentOption.getSummary());
+
+        return lv;
+    }
+
+    /**
+     * Rellena los views de las opciones del menú principal, mostrando una breve descripción de
+     * cada una
+     *
+     * @param lv       el item view a rellenar
+     * @param position la posición de la {@link Banned baneado} dentro del adapter
+     */
+    private View setupBanned(View lv, int position) {
+        Banned currentBanned = (Banned) getItem(position);
+
+        TextView bannedTextView = (TextView) lv.findViewById(R.id.option_text_view);
+        bannedTextView.setText(currentBanned.getBanned());
+
+        TextView reasonTextView = (TextView) lv.findViewById(R.id.summary_text_view);
+        reasonTextView.setText(currentBanned.getReason());
 
         return lv;
     }

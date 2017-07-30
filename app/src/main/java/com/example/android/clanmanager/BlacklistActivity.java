@@ -47,7 +47,7 @@ public class BlacklistActivity extends AppCompatActivity {
 
     // Objetos para manejo de la UI
     private ListView mlistView;
-    private BannedAdapter mBannedAdapter;
+    private TwoLineAdapter mBannedAdapter;
     private ProgressBar mProgressBar;
 
     @Override
@@ -59,8 +59,8 @@ public class BlacklistActivity extends AppCompatActivity {
         mBannedDatabaseReference = mFirebaseDatabase.getReference().child("banned");
 
         mlistView = (ListView) findViewById(R.id.banned_list);
-        ArrayList<Banned> banneds = new ArrayList<>();
-        mBannedAdapter = new BannedAdapter(this, banneds);
+        ArrayList<Object> banneds = new ArrayList<>();
+        mBannedAdapter = new TwoLineAdapter(this, banneds);
         mlistView.setAdapter(mBannedAdapter);
         mProgressBar = (ProgressBar) findViewById(R.id.blacklist_progress_bar);
         mProgressBar.getIndeterminateDrawable()
