@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Option;
+import com.example.android.clanmanager.utils.ShareUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -179,8 +180,23 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sign_out:
                 signOut();
                 return true;
+            case R.id.action_share_rules:
+                shareRules();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Crea archivos de imágenes de las reglas y requisitos de ascenso y los comparte a través
+     * de WhatsApp
+     */
+    private void shareRules() {
+        if (ShareUtils.createImageFiles(this)) {
+            startActivity(ShareUtils.getShareRulesIntent());
+        } else {
+            Toast.makeText(this, "No se pudieron crear los archivos", Toast.LENGTH_SHORT).show();
         }
     }
 

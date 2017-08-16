@@ -3,6 +3,7 @@
     <string name="about_label">Acerca de esta app</string>
     <string name="sign_out_label">Cerrar sesión</string>
     <string name="sancionados_label">Sancionados</string>
+    <string name="share_rules_label">Compartir reglas</string>
     <string name="sancionados_summary">Strikes de los usuarios</string>
     <string name="war_order_label">Orden de guerras</string>
     <string name="war_order_summary">¿Quién lanza la siguiente?</string>
