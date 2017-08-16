@@ -19,6 +19,14 @@ import java.util.ArrayList;
  * Contiene métodos para crear archivos de imágenes y compartirlos a través de WhatsApp
  */
 public class ShareUtils {
+    /**
+     * Nombre del archivo de las reglas
+     */
+    private static final String RULES_FILE_NAME = "reglas.jpeg";
+    /**
+     * Nombre del archivo de los requisitos de ascenso
+     */
+    private static final String PROMOTION_FILE_NAME = "ascenso.jpeg";
 
     /**
      * Crea imágenes JPEG de las reglas del clan y requisitos de ascenso en el almacenamiento
@@ -37,7 +45,7 @@ public class ShareUtils {
         // Ruta donde se crearán los archivos públicos
         File storagePath = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                        + "/ClanManager");
+                        + File.separator + "ClanManager");
 
         boolean success = true;
         if (!storagePath.exists()) {
@@ -46,8 +54,8 @@ public class ShareUtils {
 
         // Crear archivos solo si el directorio existe
         if (success) {
-            File rulesFile = new File(storagePath, "reglas.jpeg");
-            File promotionsFile = new File(storagePath, "ascenso.jpeg");
+            File rulesFile = new File(storagePath, RULES_FILE_NAME);
+            File promotionsFile = new File(storagePath, PROMOTION_FILE_NAME);
             OutputStream os;
             try {
                 os = new FileOutputStream(rulesFile);
@@ -94,10 +102,12 @@ public class ShareUtils {
      * @see #getShareRulesIntent()
      */
     private static ArrayList<Uri> getImagesUris() {
-        Uri rulesFileUri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                + File.separator + "ClanManager/reglas.jpg");
-        Uri promotionsFileUri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                + File.separator + "ClanManager/ascenso.jpg");
+        // Directorio público de imágenes de la app: sdcard/Pictures/ClanManager
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + File.separator + "ClanManager";
+
+        Uri rulesFileUri = Uri.parse(path + File.separator + RULES_FILE_NAME);
+        Uri promotionsFileUri = Uri.parse(path + File.separator + PROMOTION_FILE_NAME);
 
         ArrayList<Uri> imageUriArray = new ArrayList<>();
         imageUriArray.add(rulesFileUri);
