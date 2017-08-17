@@ -173,7 +173,9 @@ public class MainActivity extends AppCompatActivity {
         // Adjunta Listener de autenticación
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
         // Reanuda el procesamiento del AdView
-        mAdView.resume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
     }
 
     @Override
@@ -184,7 +186,17 @@ public class MainActivity extends AppCompatActivity {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
         // Pausa el procesamiento del AdView
-        mAdView.pause();
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override
