@@ -47,5 +47,8 @@
 
     <string name="action_edit_strike">Editar motivo del strike</string>
     <string name="action_delete_strike">Eliminar strike</string>
-    <string name="no_seasons_registered">Ho hay temporadas registradas</string>
+    <string name="no_seasons_registered">No hay temporadas registradas</string>
+    
+    <string name="admob_app_id">ca-app-pub-5515069225083078~9309248502</string>
+    <string name="banner_unit_id">ca-app-pub-5515069225083078/5588838804</string>
 </resources>

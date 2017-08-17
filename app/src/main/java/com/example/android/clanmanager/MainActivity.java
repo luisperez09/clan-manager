@@ -15,6 +15,10 @@ import android.widget.Toast;
 import com.example.android.clanmanager.pojo.Option;
 import com.example.android.clanmanager.utils.ShareUtils;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,9 +72,23 @@ public class MainActivity extends AppCompatActivity {
      */
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        setAdViewListener();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .build();
+        mAdView.loadAd(adRequest);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
@@ -154,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Adjunta Listener de autenticación
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        // Reanuda el procesamiento del AdView
+        mAdView.resume();
     }
 
     @Override
@@ -163,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
+        // Pausa el procesamiento del AdView
+        mAdView.pause();
     }
 
     @Override
@@ -186,6 +208,56 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Agrega listener al AdView para loguear diferentes eventos
+     */
+    private void setAdViewListener() {
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.i("Ads", "Se cargó el Ad");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                String reason;
+                switch (errorCode) {
+                    case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+                        reason = "Error interno del servidor.";
+                        break;
+                    case AdRequest.ERROR_CODE_INVALID_REQUEST:
+                        reason = "Solicitud inválida. Es posible que el ad unit ID sea incorrecto.";
+                        break;
+                    case AdRequest.ERROR_CODE_NETWORK_ERROR:
+                        reason = "La solicitud no tuvo éxito debido a una falla de conexión de red.";
+                        break;
+                    case AdRequest.ERROR_CODE_NO_FILL:
+                        reason = "La solicitud tuvo éxito, pero el servidor no disponía de ads.";
+                        break;
+                    default:
+                        reason = "Se desconoce la causa de la falla";
+                        break;
+                }
+                Log.i("Ads", "No se pudo cargar el Ad. " + reason);
+            }
+
+            @Override
+            public void onAdOpened() {
+                Log.i("Ads", "El usuario hizo click sobre un Ad.");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                Log.i("Ads", "La apertura del Ad abrió otra aplicación");
+            }
+
+            @Override
+            public void onAdClosed() {
+                Log.i("Ads", "El usuario regresó a la app despues de haber visto un Ad");
+            }
+        });
     }
 
     /**
