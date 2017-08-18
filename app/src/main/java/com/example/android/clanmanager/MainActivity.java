@@ -1,6 +1,7 @@
 package com.example.android.clanmanager;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Option;
@@ -230,6 +233,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 Log.i("Ads", "Se cargó el Ad");
+                // Ajusta posición del texview para que no se solape con el banner
+                TextView footer = (TextView) findViewById(R.id.copyright_text_view);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) footer.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.adView);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                }
+                footer.setLayoutParams(params);
             }
 
             @Override
