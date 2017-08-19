@@ -86,13 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
         MobileAds.initialize(this, getString(R.string.admob_app_id));
 
-        mAdView = (AdView) findViewById(R.id.adView);
-        setAdViewListener();
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
-                .build();
-        mAdView.loadAd(adRequest);
-
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
@@ -153,6 +146,13 @@ public class MainActivity extends AppCompatActivity {
         defaultConfigMap.put(APP_VERSION_KEY, BuildConfig.VERSION_CODE);
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
         fetchConfig();
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        setAdViewListener();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
