@@ -10,17 +10,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Option;
+import com.example.android.clanmanager.utils.AdsUtils;
 import com.example.android.clanmanager.utils.ShareUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,12 +81,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        AdsUtils.initializeMobileAds(this);
 
         mAdView = (AdView) findViewById(R.id.main_activity_ad_view);
-        setAdViewListener();
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
+                findViewById(R.id.copyright_text_view), null);
+        mAdView.setAdListener(adListener);
         AdRequest adRequest = new AdRequest.Builder()
-                //.addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
                 .build();
         mAdView.loadAd(adRequest);
 
@@ -222,48 +222,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Agrega listener al AdView para loguear diferentes eventos
-     */
-    private void setAdViewListener() {
-        mAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                Log.i("Ads", "Se cargó el Ad");
-                // Ajusta posición del texview para que no se solape con el banner
-                TextView footer = (TextView) findViewById(R.id.copyright_text_view);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) footer.getLayoutParams();
-                params.addRule(RelativeLayout.ABOVE, R.id.main_activity_ad_view);
-                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-
-                footer.setLayoutParams(params);
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                String reason;
-                switch (errorCode) {
-                    case AdRequest.ERROR_CODE_INTERNAL_ERROR:
-                        reason = "Error interno del servidor.";
-                        break;
-                    case AdRequest.ERROR_CODE_INVALID_REQUEST:
-                        reason = "Solicitud inválida. Es posible que el ad unit ID sea incorrecto.";
-                        break;
-                    case AdRequest.ERROR_CODE_NETWORK_ERROR:
-                        reason = "La solicitud no tuvo éxito debido a una falla de conexión de red.";
-                        break;
-                    case AdRequest.ERROR_CODE_NO_FILL:
-                        reason = "La solicitud tuvo éxito, pero el servidor no disponía de ads.";
-                        break;
-                    default:
-                        reason = "Se desconoce la causa de la falla";
-                        break;
-                }
-                Log.i("Ads", "No se pudo cargar el Ad. " + reason);
-            }
-        });
     }
 
     /**

@@ -17,15 +17,14 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Strike;
+import com.example.android.clanmanager.utils.AdsUtils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -99,27 +98,15 @@ public class SancionesEditorActivity extends AppCompatActivity {
         String username = extras.getString("name");
         setTitle(username);
 
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        AdsUtils.initializeMobileAds(this);
         mAdView = (AdView) findViewById(R.id.sancionado_detail_activity_ad_view);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
                 .build();
         mAdView.loadAd(adRequest);
-        mAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.agregar_button);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab.getLayoutParams();
-                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_detail_activity_ad_view);
-                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                fab.setLayoutParams(params);
-                ListView lv = (ListView) findViewById(R.id.strikes_list);
-                params = (RelativeLayout.LayoutParams) lv.getLayoutParams();
-                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_detail_activity_ad_view);
-                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                lv.setLayoutParams(params);
-            }
-        });
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
+                findViewById(R.id.agregar_button), findViewById(R.id.strikes_list));
+        mAdView.setAdListener(adListener);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserStrikesReference = mFirebaseDatabase.getReference().child("sancionados").child(key).child("strikes");
