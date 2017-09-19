@@ -102,11 +102,35 @@ public class BlacklistActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         // Limpia el ListView y retira los Listeners de la base de datos
         mBannedAdapter.clear();
         dettachDatabaseListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     /**
