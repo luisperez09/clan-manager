@@ -94,7 +94,6 @@ public class SancionadoListActivity extends AppCompatActivity {
      * Contiene El nombre del {@link Sancionado} que apunta a la cantidad de strikes
      */
     private Map<String, Integer> mShareListMap;
-
     /**
      * Elemento del layout de muestra Ads
      */
@@ -116,7 +115,7 @@ public class SancionadoListActivity extends AppCompatActivity {
 
         mAdView = (AdView) findViewById(R.id.sancionado_list_activity_ad_view);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
                 .build();
         mAdView.loadAd(adRequest);
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,

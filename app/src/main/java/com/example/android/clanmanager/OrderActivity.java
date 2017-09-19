@@ -19,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Coleader;
+import com.example.android.clanmanager.utils.AdsUtils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,6 +66,10 @@ public class OrderActivity extends AppCompatActivity {
      * Posición del {@link Coleader colíder} responsable dentro del adapter
      */
     private int mCurrentResponsiblePosition;
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
     // Objetos para el manejo de la UI
     private ProgressBar mProgressBar;
     private ListView mListView;
@@ -72,6 +80,16 @@ public class OrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
+        AdsUtils.initializeMobileAds(this);
+        mAdView = (AdView) findViewById(R.id.order_activity_ad_view);
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
+                findViewById(R.id.add_coleader_fab), findViewById(R.id.coleaders_list));
+        mAdView.setAdListener(adListener);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
+                .build();
+        mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mColeadersReference = mFirebaseDatabase.getReference().child("coleaders");

@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
      * Instancia de configuración remota
      */
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
-
     /**
      * Elemento del layout de muestra Ads
      */
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.copyright_text_view), null);
         mAdView.setAdListener(adListener);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
                 .build();
         mAdView.loadAd(adRequest);
 

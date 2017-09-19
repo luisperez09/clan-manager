@@ -11,6 +11,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.example.android.clanmanager.pojo.Banned;
+import com.example.android.clanmanager.utils.AdsUtils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +48,10 @@ public class BlacklistActivity extends AppCompatActivity {
      * Listener para chequeo de existencia de datos en la referencia de los baneados
      */
     private ValueEventListener mEmptyCheckListener;
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
 
     // Objetos para manejo de la UI
     private ListView mlistView;
@@ -54,6 +62,17 @@ public class BlacklistActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blacklist);
+
+        AdsUtils.initializeMobileAds(this);
+
+        mAdView = (AdView) findViewById(R.id.blacklist_activity_ad_view);
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView, findViewById(R.id.fab),
+                findViewById(R.id.banned_list));
+        mAdView.setAdListener(adListener);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
+                .build();
+        mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mBannedDatabaseReference = mFirebaseDatabase.getReference().child("banned");

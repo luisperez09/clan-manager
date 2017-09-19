@@ -19,6 +19,10 @@ import com.google.android.gms.ads.MobileAds;
  * confguración como su interacción con otros elementos de la UI
  */
 public final class AdsUtils {
+    /**
+     * ID del dispositivo de desarrollo. Para propósitos de debugging
+     */
+    public static final String TEST_DEVICE_ID = "EB1899BD5028414AC4A24EDE4E4417CE";
 
     /**
      * Inicializa la API de AdMob con su respectivo app ID

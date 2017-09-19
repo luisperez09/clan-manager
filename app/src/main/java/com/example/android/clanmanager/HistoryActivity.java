@@ -11,6 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.example.android.clanmanager.utils.AdsUtils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +46,10 @@ public class HistoryActivity extends AppCompatActivity {
      * temporadas
      */
     private ValueEventListener mEmptyCheckListener;
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
 
     // Objetos para manejo de la UI
     private ListView mListView;
@@ -54,6 +62,18 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        AdsUtils.initializeMobileAds(this);
+
+        mAdView = (AdView) findViewById(R.id.history_activity_ad_view);
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
+                null, findViewById(R.id.history_list_view));
+        mAdView.setAdListener(adListener);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
+                .build();
+        mAdView.loadAd(adRequest);
+
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mHistoryReference = mFirebaseDatabase.getReference().child("history_index");

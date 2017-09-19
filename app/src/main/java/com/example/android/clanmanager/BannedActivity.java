@@ -8,6 +8,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Banned;
+import com.example.android.clanmanager.utils.AdsUtils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -29,11 +33,26 @@ public class BannedActivity extends AppCompatActivity {
      * Referencia de la base de datos que apunta al nodo del index de los baneados
      */
     DatabaseReference mBannedDatabaseReference;
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_banned);
+
+        AdsUtils.initializeMobileAds(this);
+
+        mAdView = (AdView) findViewById(R.id.banned_activity_ad_view);
+        AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
+                findViewById(R.id.submit_new_banned_button), null);
+        mAdView.setAdListener(adListener);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
+                .build();
+        mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mBannedDatabaseReference = mFirebaseDatabase.getReference().child("banned");

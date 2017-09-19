@@ -76,7 +76,6 @@ public class SancionesEditorActivity extends AppCompatActivity {
      * la lista cuando es eliminado de la base de datos
      */
     private int mAdapterPosition;
-
     /**
      * Elemento del layout de muestra Ads
      */
@@ -101,7 +100,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
         AdsUtils.initializeMobileAds(this);
         mAdView = (AdView) findViewById(R.id.sancionado_detail_activity_ad_view);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
                 .build();
         mAdView.loadAd(adRequest);
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
