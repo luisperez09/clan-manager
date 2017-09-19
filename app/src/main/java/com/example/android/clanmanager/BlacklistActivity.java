@@ -69,9 +69,7 @@ public class BlacklistActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView, findViewById(R.id.fab),
                 findViewById(R.id.banned_list));
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();

@@ -99,9 +99,7 @@ public class SancionesEditorActivity extends AppCompatActivity {
 
         AdsUtils.initializeMobileAds(this);
         mAdView = (AdView) findViewById(R.id.sancionado_detail_activity_ad_view);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 findViewById(R.id.agregar_button), findViewById(R.id.strikes_list));

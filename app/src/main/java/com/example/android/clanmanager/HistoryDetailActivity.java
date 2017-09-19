@@ -80,9 +80,7 @@ public class HistoryDetailActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView, null,
                 findViewById(R.id.strikes_list));
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();

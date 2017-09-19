@@ -69,9 +69,7 @@ public class HistoryActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 null, findViewById(R.id.history_list_view));
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
 

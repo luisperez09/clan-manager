@@ -28,12 +28,29 @@ public final class AdsUtils {
      * Inicializa la API de AdMob con su respectivo app ID
      *
      * @param context Contexto de la app
+     * @throws NullPointerException cuando el contexto es <code>null</code>
      */
     public static void initializeMobileAds(Context context) {
         if (context == null) {
             throw new NullPointerException("El contexto no puede ser nulo.");
         }
         MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+    }
+
+    /**
+     * Devuelve un nuevo AdRequest para solicitar un ad. Facilita las pruebas de anuncios reales
+     * durante el desarrollo de la app al comentar el {@link #TEST_DEVICE_ID}
+     *
+     * @return El AdRequest con las especificaciones necesarias
+     */
+    public static AdRequest getNewAdRequest() {
+        AdRequest.Builder builder = new AdRequest.Builder();
+        if (!BuildConfig.DEBUG) {
+            return builder.build();
+        }
+        return builder
+                //.addTestDevice(TEST_DEVICE_ID)
+                .build();
     }
 
     /**
@@ -45,6 +62,7 @@ public final class AdsUtils {
      * @param adView     el AdView en el cual se mostrará el ad
      * @param bottomView el view que se encuentra en la parte inferior de la pantalla
      * @param listView   el ListView del Activity
+     * @return El AdListener configurado con sus correspondientes callbacks
      */
     public static AdListener getBannerAdListener(@NonNull final AdView adView,
                                                  final View bottomView, final View listView) {

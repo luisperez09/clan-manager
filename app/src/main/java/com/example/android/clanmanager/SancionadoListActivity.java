@@ -114,9 +114,7 @@ public class SancionadoListActivity extends AppCompatActivity {
         AdsUtils.initializeMobileAds(this);
 
         mAdView = (AdView) findViewById(R.id.sancionado_list_activity_ad_view);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 findViewById(R.id.add_sancionado_button), findViewById(R.id.sancionados_list));

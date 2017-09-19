@@ -86,9 +86,7 @@ public class MainActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 findViewById(R.id.copyright_text_view), null);
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
         mFirebaseAuth = FirebaseAuth.getInstance();

@@ -49,9 +49,7 @@ public class BannedActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 findViewById(R.id.submit_new_banned_button), null);
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();

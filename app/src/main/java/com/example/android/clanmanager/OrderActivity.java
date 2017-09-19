@@ -86,9 +86,7 @@ public class OrderActivity extends AppCompatActivity {
         AdListener adListener = AdsUtils.getBannerAdListener(mAdView,
                 findViewById(R.id.add_coleader_fab), findViewById(R.id.coleaders_list));
         mAdView.setAdListener(adListener);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdsUtils.TEST_DEVICE_ID)
-                .build();
+        AdRequest adRequest = AdsUtils.getNewAdRequest();
         mAdView.loadAd(adRequest);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
