@@ -18,11 +18,16 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Sancionado;
 import com.example.android.clanmanager.pojo.Strike;
 import com.example.android.clanmanager.utils.MapUtils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -91,6 +96,11 @@ public class SancionadoListActivity extends AppCompatActivity {
      */
     private Map<String, Integer> mShareListMap;
 
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
+
     // Objetos para el manejo de la UI
     private TwoLineAdapter mSancionadoAdapter;
     private ArrayList<Object> mSancionadosList;
@@ -102,6 +112,29 @@ public class SancionadoListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sancionado_list);
+
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+
+        mAdView = (AdView) findViewById(R.id.sancionado_list_activity_ad_view);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .build();
+        mAdView.loadAd(adRequest);
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_sancionado_button);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_list_activity_ad_view);
+                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                fab.setLayoutParams(params);
+                ListView lv = (ListView) findViewById(R.id.sancionados_list);
+                params = (RelativeLayout.LayoutParams) lv.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_list_activity_ad_view);
+                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                lv.setLayoutParams(params);
+            }
+        });
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mSancionadosReference = mFirebaseDatabase.getReference().child("sancionados");
@@ -420,6 +453,21 @@ public class SancionadoListActivity extends AppCompatActivity {
         attachDatabaseListener();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
 
     @Override
     protected void onStop() {
@@ -427,6 +475,14 @@ public class SancionadoListActivity extends AppCompatActivity {
         // Limpia la lista y retira los Listeners de la referencia de la base de datos
         mSancionadoAdapter.clear();
         dettachDatabaseListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     /**

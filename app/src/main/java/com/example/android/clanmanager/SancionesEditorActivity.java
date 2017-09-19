@@ -17,10 +17,15 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clanmanager.pojo.Strike;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,6 +78,11 @@ public class SancionesEditorActivity extends AppCompatActivity {
      */
     private int mAdapterPosition;
 
+    /**
+     * Elemento del layout de muestra Ads
+     */
+    private AdView mAdView;
+
     private TextView mSancionadoTextView;
     private ProgressBar mProgressBar;
     private ListView mListView;
@@ -89,6 +99,27 @@ public class SancionesEditorActivity extends AppCompatActivity {
         String username = extras.getString("name");
         setTitle(username);
 
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        mAdView = (AdView) findViewById(R.id.sancionado_detail_activity_ad_view);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
+                .build();
+        mAdView.loadAd(adRequest);
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.agregar_button);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fab.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_detail_activity_ad_view);
+                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                fab.setLayoutParams(params);
+                ListView lv = (ListView) findViewById(R.id.strikes_list);
+                params = (RelativeLayout.LayoutParams) lv.getLayoutParams();
+                params.addRule(RelativeLayout.ABOVE, R.id.sancionado_detail_activity_ad_view);
+                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                lv.setLayoutParams(params);
+            }
+        });
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserStrikesReference = mFirebaseDatabase.getReference().child("sancionados").child(key).child("strikes");
@@ -119,6 +150,17 @@ public class SancionesEditorActivity extends AppCompatActivity {
         // Muestra ProgressBar y adjunta los Listeners a la referencia de la base de datos
         mProgressBar.setVisibility(View.VISIBLE);
         attachDatabaseListener();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 
     @Override
@@ -127,6 +169,14 @@ public class SancionesEditorActivity extends AppCompatActivity {
         // Limpia la lista y retira los Listeners de la referencia de la base de datos
         mStrikeAdapter.clear();
         detachDatabaseListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override

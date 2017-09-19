@@ -1,7 +1,6 @@
 package com.example.android.clanmanager;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         MobileAds.initialize(this, getString(R.string.admob_app_id));
 
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = (AdView) findViewById(R.id.main_activity_ad_view);
         setAdViewListener();
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice("EB1899BD5028414AC4A24EDE4E4417CE")
@@ -236,10 +235,9 @@ public class MainActivity extends AppCompatActivity {
                 // Ajusta posición del texview para que no se solape con el banner
                 TextView footer = (TextView) findViewById(R.id.copyright_text_view);
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) footer.getLayoutParams();
-                params.addRule(RelativeLayout.ABOVE, R.id.adView);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                }
+                params.addRule(RelativeLayout.ABOVE, R.id.main_activity_ad_view);
+                params.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
                 footer.setLayoutParams(params);
             }
 
@@ -264,21 +262,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 Log.i("Ads", "No se pudo cargar el Ad. " + reason);
-            }
-
-            @Override
-            public void onAdOpened() {
-                Log.i("Ads", "El usuario hizo click sobre un Ad.");
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-                Log.i("Ads", "La apertura del Ad abrió otra aplicación");
-            }
-
-            @Override
-            public void onAdClosed() {
-                Log.i("Ads", "El usuario regresó a la app despues de haber visto un Ad");
             }
         });
     }
