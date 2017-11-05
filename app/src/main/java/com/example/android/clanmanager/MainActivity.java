@@ -1,8 +1,11 @@
 package com.example.android.clanmanager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -42,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
      * RequestCode para el login de usuario
      */
     private static final int RC_SIGN_IN = 1;
+    /**
+     * RequestCode para el permiso de escribir en almacenamiento externo
+     */
+    public static final int WRITE_FILE_RC = 2;
     /**
      * Flag que chequea si el usuario logueado acaba de iniciar sesión
      */
@@ -214,10 +221,37 @@ public class MainActivity extends AppCompatActivity {
                 signOut();
                 return true;
             case R.id.action_share_rules:
-                shareRules();
+                checkFilePermission();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case WRITE_FILE_RC:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    shareRules();
+                } else {
+                    Toast.makeText(this, "Permiso negado", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Chequea que el usuario haya cedido permiso para escribir en almacenamiento externo para
+     * compartir las reglas. Solicita permiso si no ha sido cedido
+     */
+    private void checkFilePermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_FILE_RC);
+        } else {
+            shareRules();
         }
     }
 
