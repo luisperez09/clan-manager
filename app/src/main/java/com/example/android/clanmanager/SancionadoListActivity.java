@@ -27,6 +27,7 @@ import com.example.android.clanmanager.utils.MapUtils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -539,7 +540,7 @@ public class SancionadoListActivity extends AppCompatActivity {
     private void archiveList() {
         int listSize = mSancionadosList.size();
 
-        if (listSize > 0) {
+        try {
             // Formato de fecha estándar para todos los dispositivos
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
             Date date = new Date(System.currentTimeMillis());
@@ -558,6 +559,9 @@ public class SancionadoListActivity extends AppCompatActivity {
             seasonIndex.setValue(readableDate);
             Toast.makeText(this, "Se ha archivado la temporada", Toast.LENGTH_SHORT).show();
             removeList();
+        } catch (Exception e) {
+            Toast.makeText(this, "Algo salió mal. Comuníquese con Hueso", Toast.LENGTH_SHORT).show();
+            FirebaseCrash.report(e);
         }
     }
 
