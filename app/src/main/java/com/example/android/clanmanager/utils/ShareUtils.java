@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.android.clanmanager.R;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,6 +70,7 @@ public class ShareUtils {
                 return rulesExists && promotionExists;
             } catch (Exception e) {
                 Log.e(context.getClass().getSimpleName(), "No se pudo crear el bitmap", e);
+                FirebaseCrash.report(e);
                 // Si no se pudo crear el bitmap devuelve false
                 return false;
             }
