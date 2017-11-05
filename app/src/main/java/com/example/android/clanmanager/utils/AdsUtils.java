@@ -50,6 +50,7 @@ public final class AdsUtils {
         }
         return builder
                 //.addTestDevice(TEST_DEVICE_ID)
+                .setGender(AdRequest.GENDER_MALE)
                 .build();
     }
 
