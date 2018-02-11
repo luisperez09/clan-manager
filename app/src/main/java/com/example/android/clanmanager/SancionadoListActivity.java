@@ -544,7 +544,8 @@ public class SancionadoListActivity extends AppCompatActivity {
             // Formato de fecha estándar para todos los dispositivos
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
             Date date = new Date(System.currentTimeMillis());
-            String readableDate = dateFormat.format(date);
+            String readableDate = dateFormat.format(date)
+                    .replaceAll("[.$#/\\[\\]]", ""); // Elimina caracteres prohibidos
 
             DatabaseReference seasonRef = mFirebaseDatabase.getReference().child("history").child(readableDate);
             DatabaseReference seasonIndex = mFirebaseDatabase.getReference().child("history_index").child(readableDate);
