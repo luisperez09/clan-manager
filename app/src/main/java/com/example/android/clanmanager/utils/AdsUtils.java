@@ -2,6 +2,7 @@ package com.example.android.clanmanager.utils;
 
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,10 @@ public final class AdsUtils {
      * ID del dispositivo de desarrollo. Para propósitos de debugging
      */
     public static final String TEST_DEVICE_ID = "EB1899BD5028414AC4A24EDE4E4417CE";
+    /**
+     * Locación del dispositivo al momento de la ejecución de la app
+     */
+    public static Location location;
 
     /**
      * Inicializa la API de AdMob con su respectivo app ID
@@ -47,6 +52,10 @@ public final class AdsUtils {
         AdRequest.Builder builder = new AdRequest.Builder();
         if (!BuildConfig.DEBUG) {
             return builder.build();
+        }
+
+        if (location != null) {
+            builder.setLocation(location);
         }
         return builder
                 //.addTestDevice(TEST_DEVICE_ID)

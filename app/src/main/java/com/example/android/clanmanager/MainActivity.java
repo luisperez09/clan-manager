@@ -3,9 +3,11 @@ package com.example.android.clanmanager;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +24,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
      * RequestCode para el permiso de escribir en almacenamiento externo
      */
     public static final int WRITE_FILE_RC = 2;
+    /**
+     * RequestCode para el permiso de la locación
+     */
+    public static final int LOCATION_REQUEST_CODE = 3;
     /**
      * Flag que chequea si el usuario logueado acaba de iniciar sesión
      */
@@ -82,11 +90,16 @@ public class MainActivity extends AppCompatActivity {
      * Elemento del layout de muestra Ads
      */
     private AdView mAdView;
+    /**
+     * Proveedor de locación
+     */
+    private FusedLocationProviderClient mFusedLocationClient;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkLocationPermission();
         AdsUtils.initializeMobileAds(this);
 
         mAdView = (AdView) findViewById(R.id.main_activity_ad_view);
@@ -238,6 +251,43 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Permiso negado", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case LOCATION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initializeLocation();
+                } else {
+                    Toast.makeText(this, "Permiso negado", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    /**
+     * Revisa si el usuario ha concedido permiso de locación, y lo solicita en caso contrario
+     */
+    private void checkLocationPermission() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_REQUEST_CODE);
+        } else {
+            initializeLocation();
+        }
+    }
+
+    /**
+     * Obtiene la última locación disponible en el proveedor y la inicializa para accesos futuros
+     */
+    private void initializeLocation() {
+        try {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    AdsUtils.location = location;
+                }
+            });
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
