@@ -544,8 +544,7 @@ public class SancionadoListActivity extends AppCompatActivity {
             // Formato de fecha estándar para todos los dispositivos
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
             Date date = new Date(System.currentTimeMillis());
-            String readableDate = dateFormat.format(date)
-                    .replaceAll("[.$#/\\[\\]]", ""); // Elimina caracteres prohibidos
+            String readableDate = sanitizeReferenceKey(dateFormat.format(date)); // Elimina caracteres prohibidos
 
             DatabaseReference seasonRef = mFirebaseDatabase.getReference().child("history").child(readableDate);
             DatabaseReference seasonIndex = mFirebaseDatabase.getReference().child("history_index").child(readableDate);
@@ -554,7 +553,7 @@ public class SancionadoListActivity extends AppCompatActivity {
             for (int i = 0; i < listSize; i++) {
                 Sancionado currentSancionado = (Sancionado) mSancionadosList.get(i);
                 currentSancionado.setKey(null);
-                seasonMap.put(currentSancionado.getName(), currentSancionado);
+                seasonMap.put(sanitizeReferenceKey(currentSancionado.getName()), currentSancionado);
             }
             seasonRef.setValue(seasonMap);
             seasonIndex.setValue(readableDate);
@@ -564,6 +563,16 @@ public class SancionadoListActivity extends AppCompatActivity {
             Toast.makeText(this, "Algo salió mal. Comuníquese con Hueso", Toast.LENGTH_SHORT).show();
             FirebaseCrash.report(e);
         }
+    }
+
+    /**
+     * Elimina caracteres prohibidos en los Keys de la base de datos
+     *
+     * @param referenceKey el push key a ser desinfectado
+     * @return push key desinfectado
+     */
+    private String sanitizeReferenceKey(String referenceKey) {
+        return referenceKey.replaceAll("[.$#/\\[\\]]", "");
     }
 
     /**
