@@ -1,13 +1,16 @@
 package com.example.android.clanmanager;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -46,6 +49,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     /**
+     * Flag para determinar si la versión actual es la más reciente
+     */
+    public static boolean latestVersion;
+    /**
      * RequestCode para el login de usuario
      */
     private static final int RC_SIGN_IN = 1;
@@ -65,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
      * Key de la versión de la app en la consola de Firebase
      */
     private static final String APP_VERSION_KEY = "app_version";
+    /**
+     * Key del enlace de descarga en la consola de Firebase
+     */
+    private static final String UPDATE_LINK_KEY = "app_update_link";
     /**
      * Nombre de usuario proveniente del proveedor (Gmail)
      */
@@ -361,13 +372,45 @@ public class MainActivity extends AppCompatActivity {
      */
     private void compareAppVersion() {
         Long app_version = mFirebaseRemoteConfig.getLong(APP_VERSION_KEY);
+        String update_link = mFirebaseRemoteConfig.getString(UPDATE_LINK_KEY);
         int fetchedAppVersion = app_version.intValue();
         if (fetchedAppVersion > BuildConfig.VERSION_CODE) {
             Log.w(TAG, "Update available");
-            finish();
-            Toast.makeText(this, "Hay una nueva versión disponible", Toast.LENGTH_LONG).show();
+            latestVersion = true;
+            showUpdateDialog(update_link);
         } else {
             Log.w(TAG, "Latest version");
         }
+    }
+
+    /**
+     * Muestra diálogo informando sobre una nueva versión disponible y dirige al usuario a un
+     * enlace de descarga de la nueva apk
+     */
+    private void showUpdateDialog(final String updateLink) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Aleluya!")
+                .setMessage("Hueso dejó de rascarse las bolas y publicó una nueva versión de éste" +
+                        " intento de app :)")
+                .setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateLink));
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                            Toast.makeText(MainActivity.this, "Abriendo enlace de descarga",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                })
+                .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+        builder.show();
     }
 }
